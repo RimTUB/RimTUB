@@ -51,7 +51,6 @@ def start():
             api_hash=API_HASH,
             phone_number=PHONE,
             app_version=version,
-            lang_code="ru",
             device_model = CL_DEVICE_MODEL,
             system_version = CL_SYSTEM_VERSION,
             lang_pack = CL_LANG_PACK,
