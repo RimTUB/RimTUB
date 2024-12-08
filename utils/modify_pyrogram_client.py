@@ -70,6 +70,10 @@ class ModifyPyrogramClient(Client):
         :param bot: Асинхронный Telegram-бот.
         :param kwargs: Дополнительные именованные аргументы для инициализации.
         """
+        
+        if not os.path.exists(kwargs.get('workdir')):
+            os.makedirs(kwargs.get('workdir'))
+
         super().__init__(*args, **kwargs)
 
         self.st = DictStorage()
