@@ -31,8 +31,8 @@ from utils import get_script_directory, ModifyPyrogramClient, clients
 from sys import argv
 from telebot.async_telebot import AsyncTeleBot 
 
-version = 'rc-2.0.0-1'
-version_tuple = (2, 0, 0, 'rc', 1)
+version = '2.0.0'
+version_tuple = (2, 0, 0, 'release', 0)
 
 
 

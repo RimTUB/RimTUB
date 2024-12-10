@@ -13,8 +13,8 @@ PHONES = ["+"]
 # ----------------------------------------------------------------- #
 
 #                           изменять тут
-#            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv  
-BOT_TOKEN = "7021881677:AAHBUdu7Aef9jxb918JSip5m7Nfdrb5A"
+#            vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv  
+BOT_TOKEN = "4839574812:AAFD39kkdpWt3ywyRZergyOLMaJhac60qc"
 # Токен бота от @BotFather (замени на свой)
 # Пример:
 # BOT_TOKEN = "7021881677:AAHBUdu7Aef9jxb918JSip5m7Nfdrb5A"
@@ -35,7 +35,7 @@ PLAY_SOUND = True
 # воспроизводить ли звук при запуске
 # Варианты:
 # PLAY_SOUND = True  # воспроизводить звук
-# PLAY_SOUND = False # НЕ воспроизводить звук
+# PLAY_SOUND = False # НЕ воспроизводить звук. Выбирай это если ставишь на сервер/хостинг
 
 # ----------------------------------------------------------------- #
 
@@ -44,7 +44,7 @@ SHOW_NOTIFICATION = True
 # Показывать уведомление windows при запуске
 # Варианты:
 # SHOW_NOTIFICATION = True  # показывать
-# SHOW_NOTIFICATION = False # НЕ показывать
+# SHOW_NOTIFICATION = False # НЕ показывать. Выбирай это если ставишь на сервер/хостинг
 
 # ----------------------------------------------------------------- #
 
