@@ -17,6 +17,11 @@ from config import PREFIX
 
 groups = []
 
+def get_module_name_by_number(group, module_groups):
+    for module_name, groups in module_groups.items():
+        if group in groups:
+            return module_name
+    return None
 
 class NCmd:
     group: int
@@ -25,10 +30,19 @@ class NCmd:
         self.client = client
     
     def __call__(self, commands: list) -> Any:
-        return self.client.on_message(
-            filters.command(commands, PREFIX) & filters.me
-            & ~filters.forwarded,
-            group=self.group
-        )
+        def wrapper(func):
+            @self.client.on_message(
+                filters.command(commands, PREFIX) & filters.me
+                & ~filters.forwarded,
+                group=self.group
+            )
+            async def __wrapper(client, message):
+                try:
+                    await func(client, message)
+                except:
+                    client.logger.error(f"Error in command {message.command[0]} "
+                                     f"(module {get_module_name_by_number(self.group, client._module_groups)})",
+                                     exc_info=True)
+        return wrapper
 
 _objects = {}

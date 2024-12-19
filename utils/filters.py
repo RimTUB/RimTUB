@@ -1,6 +1,6 @@
 from typing import List
 
-from pyrogram.filters import create, Filter
+from pyrogram.filters import *
 
 
 __all__ = [

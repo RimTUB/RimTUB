@@ -4,7 +4,7 @@ APScheduler==3.10.4
 coloredlogs==15.0.1
 pygame==2.5.2
 pyromod==3.1.6
-pyTelegramBotAPI==4.18.1
+pyTelegramBotAPI==4.25.0
 TgCrypto==1.2.5
 plyer==2.1.0
 Pyrogram @ https://github.com/KurimuzonAkuma/pyrogram/archive/v2.1.21.zip#sha256=eff8150622c0e8c9d615b33853a4fc11d57ca793418c4a0da164cdad410d832c

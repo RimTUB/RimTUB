@@ -31,8 +31,8 @@ from utils import get_script_directory, ModifyPyrogramClient, clients
 from sys import argv
 from telebot.async_telebot import AsyncTeleBot 
 
-version = '2.0.0'
-version_tuple = (2, 0, 0, 'release', 0)
+version = '2.0.1'
+version_tuple = (2, 0, 1, 'release', 0)
 
 
 
@@ -96,7 +96,7 @@ def start():
     if not is_restart and SHOW_NOTIFICATION:
         import plyer
         plyer.notification.notify(
-            title=f'RimTUB v{version} Запущен!',
+            title=f'RimTUB v. {version} Запущен!',
             message=f'Не закрывай консоль, иначе RimTUB прекратит работу',
             app_name='RimTUB',
             app_icon=f'{get_script_directory()}\\logo.ico',

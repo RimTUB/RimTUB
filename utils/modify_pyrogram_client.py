@@ -278,11 +278,16 @@ class ModifyPyrogramClient(Client):
 
             app.add_task(__package__, worker(arg))
         """
+        async def __wrapper(coro, logger: Logger):
+            try:
+                await coro
+            except:
+                logger.error(f'Error in {module_name} module', exc_info=True)
         module_name = module_name.removeprefix('plugins.')
         if module_name not in self._module_tasks:
             self._module_tasks[module_name] = []
         ev = asyncio.get_event_loop()
-        task = ev.create_task(coro)
+        task = ev.create_task(__wrapper(coro, self.logger))
         self._module_tasks[module_name].append(task)
         self.logger.debug(f'Task {task} was created (module {repr(module_name)})')
         return task
