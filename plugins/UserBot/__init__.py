@@ -11,7 +11,7 @@ from telebot.types import (
 
 from utils import *
 from main import version
-from config import PREFIX, SHOW_HEADER_IN_HELP
+from config import PREFIX, SHOW_HEADER_IN_HELP, DISABLE_STARTUP_MESSAGE
 
 
 def build_module_help_text(mod, header=True):
@@ -78,8 +78,9 @@ async def main(app: Client):
                 await app.send_inline_bot_result(int(chat_id), r.query_id, "0")
                 await app.delete_messages(int(chat_id), int(msg_id))
         else:
-            r = await app.get_inline_bot_results(app.bot_username, format_callback(app, started))
-            await app.send_inline_bot_result('me', r.query_id, "0")
+            if not DISABLE_STARTUP_MESSAGE:
+                r = await app.get_inline_bot_results(app.bot_username, format_callback(app, started))
+                await app.send_inline_bot_result('me', r.query_id, "0")
             
 
     @cmd(['me', 'start', 'menu'])
