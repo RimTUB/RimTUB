@@ -35,7 +35,7 @@ def build_module_help_text(mod, header=True):
     help_text += ":\n" if mod.get_features_count() > 0 else "\n"
     for f in mod.get_features():
         help_text += "  " + b(f.name) + ":\n"
-        help_text += "    " + "\n    ".join(escape(f.description.split('\n')))
+        help_text += "    " + "\n    ".join(map(escape, f.description.split('\n')))
         help_text += "\n\n"
 
     help_text += f"\n{b('Легенда: ')}\n   {code('< >')} – обязательный аргумент\n   {code('[ ]')} – необязательный аргумент.\n   {code(' / ')} – или"
