@@ -130,12 +130,25 @@ class ModifyPyrogramClient(Client):
             self._on_ready_funcs.append((group, func))
         return decorator
 
-    async def _start_on_ready(self):
-        for group, func in self._on_ready_funcs:
-            for module, groups in self._module_groups.items():
-                if group in groups:
-                    self.add_task(module, func(self))
-            
+    async def _start_on_readys(self):
+        for module_name in self._module_groups:
+            await self._start_on_ready(module_name)
+                    
+
+    async def _start_on_ready(self, module_name):
+        if module_name in self._module_groups:
+            for group in self._module_groups[module_name]:
+                for gr, func in self._on_ready_funcs:
+                    if group == gr:
+                        try:
+                            self.logger.debug(f"Running @on_ready (module {module_name}) ...")
+                            r = await func(self)
+                            self.logger.debug(f"Done")
+                            return 'ok', r
+                        except Exception as e:
+                            self.logger.error(f"Error in @on_ready (module {module_name})")
+                            return 'error', e
+        return 'ok', None
 
     def cmd(self, group: int):
         """
@@ -173,9 +186,16 @@ class ModifyPyrogramClient(Client):
         try:
             if restart:
                 await self.stop_module(module_name, unload_help=unload_help, delete_from_sys_modules=False)
+                if module_name in self._module_groups:
+                    for group in self._module_groups[module_name]:
+                        for row in self._on_ready_funcs.copy():
+                            if group == row[0]:
+                                self._on_ready_funcs.remove(row)
+
                 module = importlib.import_module(f'plugins.{module_name}')
                 if 'plugins.'+module_name in sys.modules.keys():
                     module = importlib.reload(sys.modules['plugins.'+module_name])
+                
             else:
                 module = importlib.import_module(f'plugins.{module_name}')
             
@@ -192,7 +212,7 @@ class ModifyPyrogramClient(Client):
                     self.logger.debug(f"installing {to_install}...")
                     pip.main(['install', to_install])
 
-            t = self.add_task(module_name, module.main(self))
+            await module.main(self)
 
         except Exception as e:
             if exception:
@@ -201,7 +221,6 @@ class ModifyPyrogramClient(Client):
 
         else:
             self.logger.debug(f'Module loaded: {module_name}')
-            return t
 
     async def stop_module(self, module_name, unload_help=False, all_clients=False, delete_from_sys_modules=True):
         """

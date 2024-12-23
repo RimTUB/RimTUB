@@ -31,8 +31,8 @@ from utils import get_script_directory, ModifyPyrogramClient, clients
 from sys import argv
 from telebot.async_telebot import AsyncTeleBot 
 
-version = '2.0.2'
-version_tuple = (2, 0, 2, 'release', 0)
+version = '2.0.3'
+version_tuple = (2, 0, 3, 'release', 0)
 
 
 
@@ -78,7 +78,7 @@ def start():
     asyncio.get_event_loop().create_task(bot.polling(non_stop=True))
 
     for client in clients:
-        asyncio.get_event_loop().create_task(client._start_on_ready())
+        asyncio.get_event_loop().create_task(client._start_on_readys())
 
     is_restart = len(argv) > 1
 

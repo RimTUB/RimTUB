@@ -1,6 +1,25 @@
+from traceback import print_exc
 from utils import *
 
-__libs__ = 'googletrans==3.1.0a0',
+__libs__ = [['googletrans', 'googletrans==3.1.0a0']]
+
+
+def extract_text(msg, offset):
+    if msg.text:
+        if offset == 2:
+            _, _, *text = msg.text.split(maxsplit=2)
+        elif offset == 3:
+            _, _, _, *text = msg.text.split(maxsplit=3)
+        text = " ".join(text) if text else None
+    if text:
+        return text
+    if msg.quote_text:
+        return msg.quote_text
+    elif msg.reply_to_message and msg.reply_to_message.text:
+        return msg.reply_to_message.text
+    elif msg.reply_to_message and msg.reply_to_message.caption:
+        return msg.reply_to_message.caption
+    return None
 
 async def main(app):
 
@@ -17,32 +36,29 @@ async def main(app):
     @cmd(['tr', 'translate'])
     async def _tr(_, msg):
         try:
-            _, ln, *text = (msg.text or msg.caption).split(maxsplit=2)
-            if text == []:
-                if msg.reply_to_message:
-                    text = msg.quote_text or msg.reply_to_message.text
-                else:
-                    return await msg.edit("Неверный ввод данных!")
+            _, ln, *__ = msg.text.split(maxsplit=2)
+            
+            text = extract_text(msg, 2)
+            if text is None:
+                return await msg.edit("Неверный ввод данных! 1")
         
             tr = translator.translate(text, ln)
             await msg.edit(
                 f"{b(tr.src)}:\n{bq(text)}\n{b(tr.dest)}:\n{bq(tr.text)}"
             )
         except Exception as e:
+            print_exc()
             if 'text' not in locals().keys():
-                return await msg.edit("Неверный ввод данных!")
+                return await msg.edit("Неверный ввод данных! 2 ")
             await msg.edit(f"{bq(text)}\n{b(f'{e.__class__.__name__}')}: {bq(str(e))}")
             
     @cmd(['trf', 'translatefrom', 'trfrom'])
     async def _trf(_, msg):
-        _, src, ln, *text = (msg.text or msg.caption).split(maxsplit=3)
-        if text == []:
-            if msg.reply_to_message:
-                text = msg.quote_text or msg.reply_to_message.text
-            else:
-                return await msg.edit("Неверный ввод данных!")
-        else:
-            text = text[0]
+        _, src, ln, *__ = (msg.text or msg.caption).split(maxsplit=3)
+
+        text = extract_text(msg, 3)
+        if text is None:
+            return await msg.edit("Неверный ввод данных! 1")
         
         try:
             tr = translator.translate(text, ln, src)
@@ -64,7 +80,7 @@ helplist.add_module(
         __package__,
         description="Google переводчик",
         author="built-in (@RimMirK)",
-        version="1.1.2",
+        version="1.1.3",
     ).add_command(
         Command(['tr', 'translate'], [Arg("целевой язык"), Arg("текст/ответ")], "Перевести текст")
     ).add_command(

@@ -1,3 +1,4 @@
+from difflib import SequenceMatcher, get_close_matches
 from typing import List, TextIO, Tuple, Dict, Callable, Any
 import os, sys, gc, time, re
 
@@ -311,7 +312,6 @@ def get_tree(directory: str, prefix: str = "", html: bool = False) -> str:
     
     return result
 
-
 def find_file(
     filename: str, 
     search_path: str, 
@@ -321,8 +321,7 @@ def find_file(
     default: Any = None
 ) -> str | Any:
     """
-    Ищет файл по имени в указанной директории и её подпапках с возможностью настройки глубины поиска,
-    фильтрации по расширениям и учёта регистра.
+    Ищет файл с самым похожим именем в указанной директории и её подпапках.
 
     :param str filename: имя файла, который необходимо найти.
     :param str search_path: путь к директории, в которой будет осуществляться поиск.
@@ -330,25 +329,15 @@ def find_file(
     :param List[str] extensions: список расширений для фильтрации (по умолчанию любые файлы).
     :param bool case_sensitive: учитывать ли регистр имени файла (по умолчанию False).
     :param Any default: значение по умолчанию, возвращаемое при отсутствии файла.
-    :return str | Any: полный путь к файлу или значение default, если файл не найден.
+    :return str | Any: полный путь к самому похожему файлу или значение default, если файл не найден.
     """
     search_path = os.path.abspath(search_path)
 
     if extensions:
         extensions = [ext.lower() if not case_sensitive else ext for ext in extensions]
 
-    def match(file: str) -> bool:
-        file_name_without_ext = os.path.splitext(file)[0]
-        
-        if not case_sensitive:
-            return filename.lower() == file.lower() or filename.lower() == file_name_without_ext.lower()
-        return filename == file or filename == file_name_without_ext
-
-    def valid_extension(file: str) -> bool:
-        if not extensions:
-            return True
-        file_ext = os.path.splitext(file)[1].lower() if not case_sensitive else os.path.splitext(file)[1]
-        return file_ext in extensions
+    collected_files = []
+    original_files = []
 
     for root, dirs, files in os.walk(search_path):
         current_depth = root[len(search_path):].count(os.sep)
@@ -357,36 +346,42 @@ def find_file(
             dirs[:] = []
 
         for file in files:
-            if match(file) and valid_extension(file):
-                return os.path.join(root, file)
+            file_ext = os.path.splitext(file)[1].lower() if not case_sensitive else os.path.splitext(file)[1]
+            if not extensions or file_ext in extensions:
+                full_path = os.path.join(root, file)
+                collected_files.append(file.lower() if not case_sensitive else file)
+                original_files.append(full_path)
 
+    if not case_sensitive:
+        filename = filename.lower()
+
+    closest_matches = get_close_matches(filename, collected_files, n=1, cutoff=0.6)
+    if closest_matches:
+        best_match_index = collected_files.index(closest_matches[0])
+        return original_files[best_match_index]
     return default
 
-
 def find_directory(
-    dirname: str, 
-    search_path: str, 
-    max_depth: int = None, 
-    case_sensitive: bool = False, 
+    dirname: str,
+    search_path: str,
+    max_depth: int = None,
+    case_sensitive: bool = False,
     default: Any = None
 ) -> str | Any:
     """
-    Ищет директорию по имени в указанной директории и её подпапках с возможностью настройки глубины поиска
-    и учёта регистра.
+    Ищет директорию с самым похожим именем в указанной директории и её подпапках.
 
     :param str dirname: имя директории, которую необходимо найти.
     :param str search_path: путь к директории, в которой будет осуществляться поиск.
     :param int max_depth: максимальная глубина рекурсивного поиска (по умолчанию нет ограничения).
     :param bool case_sensitive: учитывать ли регистр имени директории (по умолчанию False).
     :param Any default: значение по умолчанию, возвращаемое при отсутствии директории.
-    :return str | Any: полный путь к директории или значение default, если директория не найдена.
+    :return str | Any: полный путь к самой похожей директории или значение default, если директория не найдена.
     """
     search_path = os.path.abspath(search_path)
 
-    def match(folder: str) -> bool:
-        if not case_sensitive:
-            return dirname.lower() == folder.lower()
-        return dirname == folder
+    collected_dirs = []
+    original_dirs = []
 
     for root, dirs, files in os.walk(search_path):
         current_depth = root[len(search_path):].count(os.sep)
@@ -395,7 +390,18 @@ def find_directory(
             dirs[:] = []
 
         for folder in dirs:
-            if match(folder):
-                return os.path.join(root, folder)
+            full_path = os.path.join(root, folder)
+            collected_dirs.append(folder.lower() if not case_sensitive else folder)
+            original_dirs.append(full_path)
 
+    if not case_sensitive:
+        dirname = dirname.lower()
+
+    closest_matches = get_close_matches(dirname, collected_dirs, n=1, cutoff=0.6)
+    if closest_matches:
+        best_match_index = collected_dirs.index(closest_matches[0])
+        return original_dirs[best_match_index]
     return default
+
+
+

@@ -56,15 +56,12 @@ def pack_module(module_dir: str, output_filename: int, ignore_file='.rimtubignor
                 
                 if should_ignore(relative_path):
                     continue
-                
-                arcname = os.path.relpath(file_path, start=module_dir)
 
-                info = zipfile.ZipInfo(file_path)
+                info = zipfile.ZipInfo(relative_path)
                 info.date_time = (1980, 1, 1, 0, 0, 0) 
+
                 with open(file_path, 'rb') as f:
                     zipf.writestr(info, f.read())
-
-                zipf.write(file_path, arcname)
         
     return output_filename
 

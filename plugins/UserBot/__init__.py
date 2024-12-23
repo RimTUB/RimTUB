@@ -65,12 +65,13 @@ async def main(app: Client):
 
     @app.on_ready(G)
     async def _onr(app):
+        print('asdk')
         if len(sys.argv) >= 2:
             _, type_, *values = sys.argv
             if type_ == 'restart':
                 app_hash, time_, chat_id, msg_id = values
                 if app.app_hash != app_hash:
-                    return
+                    return  
                 now = time.perf_counter()
                 delta = now - float(time_)
                 app.st.set('_core.restart.delta', delta)

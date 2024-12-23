@@ -24,7 +24,7 @@ helplist.add_module(
         __package__,
         description="Ваш помощник модулей",
         author="built-in (@RimMirK)",
-        version='2.0'
+        version='2.1'
     ).add_command(
         Command(['dmf'], [Arg("ответ с <u>файлом</u> модуля")], "Скачать/обновить модуль")
     ).add_command(
@@ -106,6 +106,12 @@ async def dml(app, msg, notify, url, no_alert=False):
         os.remove(save_path)
         
         await app.load_module(os.path.splitext(filename)[0], restart=True, exception=True, all_clients=True)
+
+        for client in clients:
+            r = await client._start_on_ready(os.path.splitext(filename)[0])
+            if r[0] == 'error':
+                raise r[1]
+
         await notify(f"<emoji id=5206607081334906820>✅</emoji> Модуль <b>{os.path.splitext(filename)[0]}</b> успешно загружен и установлен!")
 
     except requests.exceptions.RequestException as e:
@@ -116,10 +122,10 @@ async def dml(app, msg, notify, url, no_alert=False):
     except Exception as e:
         await notify(
             b(f"<emoji id='5240241223632954241'>🚫</emoji> Произошла ошибка: {escape(e.__class__.__name__)}:\n", False)
-            + escape(e)
+            + escape(e) + f"\n{await paste(format_exc())}"
         )
 
-async def dmf(app, msg, notify, file_path, name, no_alert=False):
+async def dmf(app: Client, msg, notify, file_path, name, no_alert=False):
     if not no_alert:
         with open(file_path, 'rb') as f:
             data = f.read()
@@ -138,27 +144,38 @@ async def dmf(app, msg, notify, file_path, name, no_alert=False):
             await msg.delete()
             return 
         return
-    
-    isset = os.path.exists(f'plugins//{name}')
-    unpack_module(file_path, f'plugins/{name}/')
-    os.remove(file_path)
-    await app.load_module(name, restart=isset, exception=True, all_clients=True)    
     try:
-        cap = bq(
-            build_module_help_text(
-                helplist.get_module(
-                    name,
-                ), False
-            ), True, False
+        isset = os.path.exists(f'plugins//{name}')
+        unpack_module(file_path, f'plugins/{name}/')
+        os.remove(file_path)
+        await app.load_module(name, restart=isset, exception=True, all_clients=True)    
+
+        for client in clients:
+            r = await client._start_on_ready(name)
+            if r[0] == 'error':
+                raise r[1]
+
+        try:
+            cap = bq(
+                build_module_help_text(
+                    helplist.get_module(
+                        name,
+                    ), False
+                ), True, False
+            )
+            
+        except:
+            cap = ''
+        if isset:
+            return await notify("<emoji id='5206607081334906820'>✅</emoji> Модуль обновлен и перезапущен!" + "\n\n" + cap)
+        await notify(
+            "<emoji id='5206607081334906820'>✅</emoji> Модуль загружен и запущен!" + "\n\n" + cap
         )
-        
-    except:
-        cap = ''
-    if isset:
-        return await notify("<emoji id='5206607081334906820'>✅</emoji> Модуль обновлен и перезапущен!" + "\n\n" + cap)
-    await notify(
-        "<emoji id='5206607081334906820'>✅</emoji> Модуль загружен и запущен!" + "\n\n" + cap
-    )
+    except Exception as e:
+        await notify(
+            b(f"<emoji id='5240241223632954241'>🚫</emoji> Произошла ошибка!\n{await paste(format_exc())}", False)
+        )
+
 
 async def main(app: Client):
 
@@ -209,6 +226,7 @@ async def main(app: Client):
             return await msg.edit("<emoji id='5274099962655816924'>❗️</emoji> Напиши название модуля!")
 
         module_path = find_directory(name, 'plugins', 1)
+
         if not module_path:
             return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
 
@@ -260,7 +278,14 @@ async def main(app: Client):
             module_path = find_directory(module_name, 'plugins', 1)
             if not module_path:
                 return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
-            await app.load_module(os.path.basename(module_path), restart=True, exception=True, all_clients=True)
+            name = os.path.basename(module_path)
+            await app.load_module(name, restart=True, exception=True, all_clients=True)
+
+            for client in clients:
+                r = await client._start_on_ready(name)
+                if r[0] == 'error':
+                    raise r[1]
+
         except Exception as e:
             await msg.edit(f'Не удалось перезагрузить модуль!\n{await paste(format_exc())}')
             
