@@ -1,0 +1,1 @@
+pip install aiohttp aiosqlite APScheduler coloredlogs https://github.com/KurimuzonAkuma/pyrogram/archive/v2.1.34 pyromod= pyTelegramBotAPI TgCrypto plyer
