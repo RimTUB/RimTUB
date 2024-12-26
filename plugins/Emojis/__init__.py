@@ -3,11 +3,11 @@ from utils import *
 
 __libs__ = ('bs4', 'beautifulsoup4'),
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
     from bs4 import BeautifulSoup
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['emj', 'emjs'])
     async def _emj(_, msg):
@@ -33,11 +33,11 @@ async def main(app):
         
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Смотреть айди премиум емодзи",
         author='built-in (@RimMirK)',
-        version='1.0.0'
+        version='1.0.1'
     ).add_command(
         Command(['emj', 'emjs'], [Arg('текст с емодзи и/или ответ на сообщение с емодзи')], 'показать айди емодзи')
     )

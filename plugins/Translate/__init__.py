@@ -21,13 +21,13 @@ def extract_text(msg, offset):
         return msg.reply_to_message.caption
     return None
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
     from googletrans import Translator, LANGUAGES
     
     translator = Translator()
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     LANGS = ''
     for key, lang in LANGUAGES.items():
@@ -76,11 +76,11 @@ async def main(app):
         
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Google переводчик",
         author="built-in (@RimMirK)",
-        version="1.1.3",
+        version="1.1.4",
     ).add_command(
         Command(['tr', 'translate'], [Arg("целевой язык"), Arg("текст/ответ")], "Перевести текст")
     ).add_command(

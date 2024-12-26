@@ -1,9 +1,10 @@
+from difflib import get_close_matches
 from typing import Any, Dict, List, Self
 
 
 __all__ = [
     'Argument',
-    'Module',
+    'HModule',
     'Command',
     'Feature',
     'HelpList'
@@ -79,7 +80,7 @@ class Feature:
         self.description = description
 
 
-class Module:
+class HModule:
     """
     Класс, представляющий модуль с командами и функциональностью.
 
@@ -174,12 +175,12 @@ class HelpList:
 
     Хранит все модули и предоставляет методы для их добавления и получения.
     """
-    modules: Dict[str, Module]
+    modules: Dict[str, HModule]
 
     def __init__(self) -> None:
         self.modules = {}
     
-    def add_module(self, module: Module, /) -> Self:
+    def add_module(self, module: HModule, /) -> Self:
         """
         Добавляет модуль в список.
 
@@ -189,22 +190,29 @@ class HelpList:
         self.modules[module.name] = module
         return self
     
-    def get_module(self, name: str, default: Any = None, lower: bool = False) -> Module:
+    def get_module(self, name: str, default: Any = None, lower: bool = False, similarity_threshold: float = 0.6) -> Any:
         """
-        Получает модуль по имени.
+        Получает модуль по имени или наиболее похожему имени.
 
         :param str name: Имя модуля.
         :param Any default: Значение по умолчанию, если модуль не найден, defaults to None.
         :param bool lower: Нужно ли игнорировать регистр, defaults to False.
-        :return Module: Найденный модуль или значение по умолчанию.
+        :param float similarity_threshold: Минимальный порог похожести, defaults to 0.6.
+        :return Any: Найденный модуль или значение по умолчанию.
         """
-        if not lower:
-            return self.modules.get(name, default)
-        else:
-            return dict(zip(
+        modules_dict = self.modules
+
+        if lower:
+            modules_dict = dict(zip(
                 map(lambda k: k.lower(), self.modules.keys()),
                 self.modules.values()
-            )).get(name, default)
+            ))
+            name = name.lower()
+
+        closest_matches = get_close_matches(name, modules_dict.keys(), n=1, cutoff=similarity_threshold)
+        if closest_matches:
+            return modules_dict[closest_matches[0]]
+        return default
 
     def get_modules_count(self) -> int:
         """
@@ -222,7 +230,7 @@ class HelpList:
         """
         return sorted(self.modules.keys(), key=lambda e: e.lower())
     
-    def get_modules(self) -> List[Module]:
+    def get_modules(self) -> List[HModule]:
         """
         Возвращает список всех модулей.
 

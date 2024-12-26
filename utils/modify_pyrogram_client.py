@@ -1,7 +1,7 @@
+from hashlib import sha256
 from typing import Callable, Coroutine, Iterable, List
 import asyncio, gc, importlib, itertools, os, sys, pip
 from types import FunctionType
-from hashlib import sha256
 from logging import Logger
 
 from telebot.async_telebot import AsyncTeleBot
@@ -12,9 +12,7 @@ from pyromod import Client
 
 from .misc import NCmd, helplist, clients
 from .exceptions import LoadError
-from .database import Database, DictStorage, DatabaseFactory
-
-from config.base_config import DATABASE_FILE
+from .module import Module
 
 
 
@@ -23,18 +21,11 @@ __all__ = [
 ]
 
 
-database = DatabaseFactory(DATABASE_FILE)
-
-ev = asyncio.get_event_loop()
-ev.run_until_complete(database.connect_db())
-
 class ModifyPyrogramClient(Client):
     """
     Расширенный клиент Pyrogram с поддержкой модулирования и работы с базой данных.
 
     Attributes:
-        db (Database): База данных (постоянное хранилище).
-        st (DictStorage): Локальное хранилище данных.
         num (int): Номер клиента.
         logger (Logger): Логгер для ведения журнала.
         bot (AsyncTeleBot): Асинхронный TeleBot.
@@ -43,8 +34,6 @@ class ModifyPyrogramClient(Client):
         _group_counter (Iterable): Счетчик групп.
         _module_groups (dict[int, List[str]]): Словарь групп модулей.
     """
-    db: Database
-    st: DictStorage
     num: int
     logger: Logger
     info: Logger.info
@@ -76,11 +65,8 @@ class ModifyPyrogramClient(Client):
 
         super().__init__(*args, **kwargs)
 
-        self.st = DictStorage()
         self.num = num
         self.app_hash = sha256(bytes(str(self.phone_number).encode())).hexdigest()
-
-        self.db = database.get_db(self.app_hash)
 
         self.logger = logger
         self.info = logger.info
@@ -126,6 +112,9 @@ class ModifyPyrogramClient(Client):
         return r
     
     def on_ready(self, group: int) -> Callable:
+        """
+        # Устарело! Используй mod.on_ready вместо app.on_ready(group)!
+        """
         def decorator(func: FunctionType):
             self._on_ready_funcs.append((group, func))
         return decorator
@@ -146,12 +135,14 @@ class ModifyPyrogramClient(Client):
                             self.logger.debug(f"Done")
                             return 'ok', r
                         except Exception as e:
-                            self.logger.error(f"Error in @on_ready (module {module_name})")
+                            self.logger.error(f"Error in @on_ready (module {module_name})", exc_info=True)
                             return 'error', e
         return 'ok', None
 
     def cmd(self, group: int):
         """
+        # Устарело! Используй mod.cmd вместо app.cmd(group)!
+
         Возвращает объект NCmd для обработки команд в указанной группе.
 
         :param group: Номер группы команд.
@@ -212,12 +203,14 @@ class ModifyPyrogramClient(Client):
                     self.logger.debug(f"installing {to_install}...")
                     pip.main(['install', to_install])
 
-            await module.main(self)
+            await module.main(self, await Module(module_name).init(self))
+
+            
 
         except Exception as e:
             if exception:
                 raise LoadError from e
-            self.logger.error(f"Error in module {module_name}: {e}")
+            self.logger.error(f"Error in module {module_name}: {e}", exc_info=True)
 
         else:
             self.logger.debug(f'Module loaded: {module_name}')
@@ -271,7 +264,8 @@ class ModifyPyrogramClient(Client):
         :return: None
         """
         modules_path = os.path.join(self.WORKDIR, 'plugins')
-        disabled_modules = await self.db.get('core.modules', 'disabled_modules', [])
+        mod = await Module('ModuleHelper').init(self)
+        disabled_modules = await mod.db.get('disabled_modules', [])
         self.logger.debug(f"Disabled modules: {', '.join(disabled_modules)}")
         for _, folders, __ in os.walk(modules_path):
             for module in folders:
@@ -285,6 +279,8 @@ class ModifyPyrogramClient(Client):
 
     def add_task(self, module_name: str, coro: Coroutine) -> asyncio.Task:
         """
+        # Устарело! Используй mod.add_task(coro) вместо app.add_task(__package__, coro)!
+
         Добавляет новую задачу в очередь выполнения.
 
         :param module_name: Имя модуля, с которым связана задача.
@@ -293,7 +289,8 @@ class ModifyPyrogramClient(Client):
 
         ## Пример
         .. code-block:: python
-            async def worker(arg): ...
+            async def worker(arg):
+                ...
 
             app.add_task(__package__, worker(arg))
         """
@@ -313,6 +310,9 @@ class ModifyPyrogramClient(Client):
 
     def get_group(self, module):
         """
+        # Устарело! Используй mod.group вместо app.get_group(__package__)!
+
+
         Получает следующую группу для указанного модуля.
 
         :param module: Имя модуля.

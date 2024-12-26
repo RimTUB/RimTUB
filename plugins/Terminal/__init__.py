@@ -4,13 +4,13 @@ from utils import *
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
-        version='1.1.0',
+        version='1.1.1',
         author='@vorsus',
         description="Terminal",
     ).add_command(
-        Command('t', [Arg("команда", False)], "выполнить команду")
+        Command('t', [Arg("команда")], "выполнить команду")
     )
 )
 
@@ -36,9 +36,9 @@ async def execute_command(command):
         return f"Неизвестная ошибка"
 
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['t'])
     async def terminal(_, msg: types.Message):
@@ -54,8 +54,8 @@ async def main(app):
             await msg.edit("<b>Слишком большой вывод! В разработке вывод по ссылке</b>")
             return 
         await msg.edit(
-            "<b>Команда</b>"
+            "<b>Команда</b>\n"
             f"<pre>{text}</pre>\n\n"
-            "<b>Вывод</b>"
+            "<b>Вывод</b>\n"
             f"<pre>{output}</pre>"
             )

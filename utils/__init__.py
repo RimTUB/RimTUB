@@ -2,8 +2,9 @@ from .database import *
 from .helplist import *
 from .html_tags import *
 from .misc import *
-from .scripts import *
 from .strings import *
+from .module import *
+from .scripts import *
 from .modify_pyrogram_client import *
 from .getanswer import *
 from .filters import *

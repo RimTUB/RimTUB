@@ -4,9 +4,9 @@ from .scheme import emojis
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
-        version='beta 1.0',
+        version='beta 1.0.1',
         description="ТОЛЬКО ТЕЛЕГРАМ ПРЕМИУМ!\n\nПишет текст рукописным шрифтом через премиум емодзи",
         author='built-in (@RimMirK)'
     ).add_command(
@@ -15,9 +15,9 @@ helplist.add_module(
 )
 
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
 
     @cmd('et')

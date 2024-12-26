@@ -3,10 +3,10 @@ from utils import *
 __libs__ = 'pytimeparse2',
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         author='@RimMirK',
-        version='1.0.01',
+        version='1.0.02',
         description="Делает из нечитаемого читаемое"
     ).add_command(
         Command(['pnum'], [Arg('число')], 'Вывести красиво число')
@@ -17,11 +17,11 @@ helplist.add_module(
     )
 )
 
-async def main(app):
+async def main(app: Client, mod: Module):
     
     from pytimeparse2 import parse as timeparse
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['ps2s', 'psec_to_str'])
     async def _s2s(_, msg):

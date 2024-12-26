@@ -20,11 +20,11 @@ from config import DMF_TIMEOUT, DML_TIMEOUT, CHECK_HASH_URL, DML_WHITELIST
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Ваш помощник модулей",
         author="built-in (@RimMirK)",
-        version='2.1'
+        version='2.1.1'
     ).add_command(
         Command(['dmf'], [Arg("ответ с <u>файлом</u> модуля")], "Скачать/обновить модуль")
     ).add_command(
@@ -177,9 +177,9 @@ async def dmf(app: Client, msg, notify, file_path, name, no_alert=False):
         )
 
 
-async def main(app: Client):
+async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['dmf'])
     async def _dmf(_, msg: Message):
@@ -301,11 +301,11 @@ async def main(app: Client):
                 return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
             name = os.path.split(module_path)[-1]
 
-            disabled_modules = await app.db.get('core.modules', 'disabled_modules', [])
+            disabled_modules = await mod.db.set('disabled_modules', [])
             if name not in disabled_modules:
                 await app.stop_module(name)
                 disabled_modules.append(name)
-                await app.db.set('core.modules', 'disabled_modules', disabled_modules)
+                await mod.db.set('disabled_modules', disabled_modules)
         except Exception as e:
             await msg.edit(f'Не удалось выключить модуль!\n{await paste(format_exc())}')
         else:
@@ -322,21 +322,20 @@ async def main(app: Client):
             name = os.path.split(module_path)[-1]
 
             
-            disabled_modules: list = await app.db.get('core.modules', 'disabled_modules', [])
+            disabled_modules: list = await mod.db.set('disabled_modules', [])
             if name in disabled_modules:
                 await app.load_module(name, restart=False, exception=True)
                 disabled_modules.remove(name)
-                await app.db.set('core.modules', 'disabled_modules', disabled_modules)
+                await mod.db.set('disabled_modules', disabled_modules)
 
         except Exception as e:
             await msg.edit(f'Не удалось включить модуль!\n{await paste(format_exc())}')
-            print_exc(e.__traceback__)
         else:
             await msg.edit(f"<emoji id='5206607081334906820'>✅</emoji> Модуль {b(name)} включен!")
 
     @cmd(['offms'])
     async def _offms(app: Client, msg):
-        disabled_modules = await app.db.get('core.modules', 'disabled_modules', [])
+        disabled_modules = await mod.db.get('disabled_modules', [])
         if not disabled_modules:
             t = 'Нет выключенных модулей!'
         else:

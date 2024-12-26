@@ -4,11 +4,11 @@ from utils import *
 __libs__ = ('googlesearch', 'googlesearch-python'),
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description='Поиск в Google',
         author='built-in (@RimMirK)',
-        version='1.0'
+        version='1.0.1'
     ).add_command(
         Command(['g', 'google'], [
             Argument('запрос'),
@@ -24,12 +24,12 @@ helplist.add_module(
     )
 )
 
-async def main(app: Client):
+async def main(app: Client, mod: Module):
 
     from googlesearch import search
     from urllib.parse import urlparse
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['g', 'google'])
     async def _google(_, msg):
@@ -43,8 +43,8 @@ async def main(app: Client):
             for r in search(
                 request,
                 advanced=True,
-                lang=kwargs.get('-l',   await app.db.get(__package__, 'lang',   'ru')),
-                region=kwargs.get('-r', await app.db.get(__package__, 'region', None)),
+                lang=kwargs.get('-l',   await mod.db.get('lang',   'ru')),
+                region=kwargs.get('-r', await mod.db.get('region', None)),
                 num_results=int(kwargs.get('-c', 10)),
                 safe='-unsafe' not in args
             ):
@@ -61,7 +61,7 @@ async def main(app: Client):
         lang = get_args(msg.text)
         if not lang:
             return await msg.edit(b("Введи значение!"))
-        await app.db.set(__package__, 'lang', lang)
+        await mod.db.set('lang', lang)
         await msg.edit(b(f"Язык обновлен на {lang}!"))
     
     
@@ -70,5 +70,5 @@ async def main(app: Client):
         region = get_args(msg.text)
         if not region:
             return await msg.edit(b("Введи значение!"))
-        await app.db.set(__package__, 'region', region)
+        await mod.db.set('region', region)
         await msg.edit(b(f"Регион обновлен на {region}!"))

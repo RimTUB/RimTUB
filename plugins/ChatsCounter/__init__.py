@@ -3,20 +3,20 @@ from pyrogram.enums.chat_type import ChatType
 from utils import *
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Считает кол-во Ваших чатов",
         author="@RimMirK по заказу @DragonFire20",
-        version='1.0',
+        version='1.0.1',
     ).add_command(
         Command(['ccount'], [], 'Посчитать кол-во чатов')
     )
 )
 
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
-    @app.cmd(app.get_group(__package__))(['ccount'])
+    @mod.cmd(['ccount'])
     async def countcmd(app: Client, message):
         start = perf_counter()
         users = 0

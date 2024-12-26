@@ -3,9 +3,9 @@ from utils import *
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
-        version='1.1.2',
+        version='1.1.3',
         author='built-in (@RimMirK)',
         description="Калькулятор",
     ).add_command(
@@ -17,9 +17,9 @@ helplist.add_module(
     )
 )
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['calc'])
     async def calc(_, msg: types.Message):
@@ -48,6 +48,4 @@ async def main(app):
             except: pe = e
             await msg.edit(f"<emoji id=5472164874886846699>✨</emoji> {equations} = {code(pe)}")
         except Exception as ex:
-            import traceback
-            traceback.print_tb(ex.__traceback__)
             await msg.edit(f"<emoji id=5465665476971471368>❌</emoji> Error!\n\nДля исправления: {code(f'{PREFIX}{msg.command[0]} {equations}')}")

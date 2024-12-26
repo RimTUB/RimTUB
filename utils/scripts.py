@@ -2,7 +2,7 @@ from difflib import SequenceMatcher, get_close_matches
 from typing import List, TextIO, Tuple, Dict, Callable, Any
 import os, sys, gc, time, re
 
-from utils.modify_pyrogram_client import ModifyPyrogramClient
+# from utils.modify_pyrogram_client import ModifyPyrogramClient
 
 
 __all__ = [
@@ -188,7 +188,7 @@ def restart(app_id: int, chat_id: int = None, msg_id: int = None) -> None:
              )
 
 
-async def check_ping(app: ModifyPyrogramClient) -> float:
+async def check_ping(app) -> float:
     """
     Проверяет пинг, отправляя сообщение самому себе и измеряя задержку.
 

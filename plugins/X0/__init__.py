@@ -4,9 +4,9 @@ from utils import *
 __libs__ = ['aiohttp'] 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
-        version='1.1.0',
+        version='1.1.1',
         author='@vorsus',
         description="Загрузчик файлов на x0",
     ).add_command(
@@ -16,12 +16,12 @@ helplist.add_module(
     )
 )
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
     import io
     import aiohttp
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['x0'])
     async def x0(_, msg: types.Message):

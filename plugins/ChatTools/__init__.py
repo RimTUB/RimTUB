@@ -4,10 +4,10 @@ from utils import *
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Инструменты для работы с чатами",
-        version="1.2.1",
+        version="1.2.2",
         author="built-in (@RimMirK)"
     ).add_command(
         Command(['chatid', 'cid'], [], "Показать ID чата")
@@ -26,11 +26,9 @@ helplist.add_module(
 
 
 
-async def main(app):
-    
-    G = app.get_group(__package__)
+async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(G)
+    cmd = mod.cmd
 
     @cmd(['chatid', 'cid'])
     async def _cid(_, msg):
@@ -68,8 +66,8 @@ async def main(app):
             "Теперь ты всегда в сети!\n"
             "Для отмены пиши " + code(PREFIX + 'offline')
         )
-        await app.db.set("chat_tools", 'online', True)
-        while await app.db.get("chat_tools", 'online', False):
+        await mod.db.set('online', True)
+        while await mod.db.get('online', False):
             omsg = await app.send_message('me', '.')
             await omsg.delete()
 
@@ -77,5 +75,5 @@ async def main(app):
     
     @cmd(['offline'])
     async def _offline(app, msg):
-        await app.db.set('chat_tools', 'online', False)
+        await mod.db.set('online', False)
         await msg.edit("<emoji id=5427009714745517609>✅</emoji> Теперь ты не в сети!")

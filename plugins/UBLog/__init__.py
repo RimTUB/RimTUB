@@ -10,11 +10,11 @@ from utils.html_tags import blockquote
 from utils.scripts import find_file, get_tree
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Просмотр логов RimTUB",
         author="built-in (@RimMirK)",
-        version='beta 1.0.1'
+        version='1.0.2'
     ).add_command(
         Command(['logtail'], [Arg("число строк", False)], "Получить последние n строк из лога")
     ).add_command(
@@ -26,9 +26,9 @@ helplist.add_module(
     )
 )
 
-async def main(app: Client):
+async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(['logtail'])
     async def _ltail(_, msg: M):

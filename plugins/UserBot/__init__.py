@@ -47,19 +47,19 @@ async def click(app: Client, c: C):
         lnk = await paste(f.read(), 'log')
     await app.bot.edit_message_text(f"Лог запуска: {lnk}", inline_message_id=c.inline_message_id)
 
-async def restarted(app: Client, i):
+async def restarted(app: Client, i, delta):
     await app.bot.answer_inline_query(i.id, [
-        RArticle(0, '.', TMC(f'Перезапущено за <b>{app.st.get("_core.restart.delta", 0):.2f}s.</b>', parse_mode='html'), reply_markup=IM(   
+        RArticle(0, '.', TMC(f'Перезапущено за <b>{delta:.2f}s.</b>', parse_mode='html'), reply_markup=IM(   
             ).add(IB("посмотреть лог запуска", callback_data=format_callback(app, click))))
     ])
 
 async def started(app: Client, i):
     await app.bot.answer_inline_query(i.id, [
-        RArticle(0, '.', TMC(f'<b>RimTUB Запущен!</b>', parse_mode='html'), reply_markup=IM(   
+        RArticle(0, '.', TMC(f'<b>RimTUB {version} Запущен!</b>\nПрефикс: «<code>{PREFIX}</code>»', parse_mode='html'), reply_markup=IM(   
             ).add(IB("посмотреть лог запуска", callback_data=format_callback(app, click))))
     ])
 
-async def main(app: Client):
+async def main(app: Client, mod: Module):
 
     cmd = app.cmd(G:=app.get_group(__package__))
 
@@ -74,8 +74,7 @@ async def main(app: Client):
                     return  
                 now = time.perf_counter()
                 delta = now - float(time_)
-                app.st.set('_core.restart.delta', delta)
-                r = await app.get_inline_bot_results(app.bot_username, format_callback(app, restarted))
+                r = await app.get_inline_bot_results(app.bot_username, format_callback(app, restarted, delta=delta))
                 await app.send_inline_bot_result(int(chat_id), r.query_id, "0")
                 await app.delete_messages(int(chat_id), int(msg_id))
         else:
@@ -158,7 +157,7 @@ async def main(app: Client):
 
 
 
-mod = Module(
+mod = HModule(
     __package__,
     description="Главный модуль RimTUB. Помощь и управление тут",
     author="built-in (@RimMirK)",

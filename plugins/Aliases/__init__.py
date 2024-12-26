@@ -3,11 +3,11 @@ from utils import *
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description='Управление алиасами комманд',
         author='built-in (@RimMirK)',
-        version='beta_1.0.0'
+        version='beta_1.0.1'
     ).add_command(
         Command('addalias', [Arg('алиас'), Arg("Команда")], 'Добавить алиас')
     ).add_command(
@@ -29,17 +29,14 @@ def find_callback_by_command(app, command):
             except: pass
     
 
-async def main(app: Client):
+async def main(app: Client, mod: Module):
 
-    M = __package__
-
-    group = app.get_group(M)
-    cmd = app.cmd(group)
+    cmd = mod.cmd
 
 
-    @app.on_ready(group)
+    @mod.on_ready
     async def _onr(_):
-        aliases = await app.db.get(M, 'aliases', {})
+        aliases = await mod.db.get('aliases', {})
 
         for alias, command in aliases.items():
 
@@ -50,7 +47,7 @@ async def main(app: Client):
                      "    await callback(app, msg)", dict(callback=callback),
                      dict(cmd=cmd, alias=alias, callback=callback))
             else:
-                app.logger.warning(f"Aliases: command {command} not found! Alias {alias} can't be created")
+                mod.logger.warning(f"Aliases: command {command} not found! Alias {alias} can't be created")
     
 
     @cmd('addalias')
@@ -63,9 +60,9 @@ async def main(app: Client):
                 @cmd(alias)
                 async def _alias(_, msg): await callback(app, msg)
 
-                aliases: dict = await app.db.get(M, 'aliases', {})
+                aliases: dict = await mod.db.get('aliases', {})
                 aliases.update({alias: command})
-                await app.db.set(M, 'aliases', aliases)
+                await mod.db.set('aliases', aliases)
 
                 await msg.edit(f"Алиас добавлен!\n"
                                f"<code>{PREFIX}{alias}</code>  <code>-></code>  "
@@ -80,9 +77,9 @@ async def main(app: Client):
         try:
             _, alias = msg.text.split(maxsplit=1)
             
-            aliases: dict = await app.db.get(M, 'aliases', {})
+            aliases: dict = await mod.db.get('aliases', {})
             del aliases[alias]
-            await app.db.set(M, 'aliases', aliases)
+            await mod.db.set('aliases', aliases)
 
             await msg.edit(f"Алиас <b>{alias}</b> удален! Перезагрузи юб для приминения!")
         except:
@@ -90,7 +87,7 @@ async def main(app: Client):
 
     @cmd('aliases')
     async def _aliases(_, msg):
-        aliases: dict = await app.db.get(M, 'aliases', {})
+        aliases: dict = await mod.db.get('aliases', {})
         t = b("Твои алиасы:\n")
         for alias, command in aliases.items():
             t += code(PREFIX+alias) + '  ' + code('->') + '  ' + code(PREFIX+command) + '\n'

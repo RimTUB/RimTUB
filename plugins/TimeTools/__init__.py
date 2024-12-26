@@ -7,15 +7,15 @@ from pytimeparse2 import parse
 from utils import *
 
 
-__libs__ = 'pytz', 'timezonefinder', 'geopy'
+__libs__ = ('pytz', 'pytz==2024.2'), ('timezonefinder', 'timezonefinder==6.5.2'), ('geopy', 'geopy==2.4.1')
 
 
 helplist.add_module(
-    Module(
+    HModule(
         __package__,
         description="Работа со временем\n\n* - примеры указания времени: 25s, 1d, 1h30m, 7d4s\n\nДля корректной работы включи уведомления у личного бота!",
         author='built-in (@RimMirK)',
-        version='1.0'
+        version='1.0.1'
     ).add_command(
         Command(['timer'], [Argument('время*'), Argument("Текст этикетки", False)], 'Завести таймер')
     ).add_command(
@@ -27,30 +27,30 @@ helplist.add_module(
     )
 )
 
-async def worker(app):
+async def worker(app, mod):
     while True:
-        timers: list[dict] = await app.db.get('TimeTools', 'timers', [])
+        timers: list[dict] = await mod.db.get('timers', [])
         for timer in timers:
             if timer['time'] <= time.time():
                 await app.bot.send_message(app.me.id, f"⏰ Таймер на {b(sec_to_str(timer['during']))}!\n\n" + timer.get('text', ''))
                 timers.remove(timer)
-                await app.db.set("TimeTools", 'timers', timers)
+                await mod.db.set('timers', timers)
         await asyncio.sleep(1)
 
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
     import pytz
     from timezonefinder import TimezoneFinder
     from geopy.geocoders import Nominatim
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
-    app.add_task(__package__, worker(app))
+    mod.add_task(worker(app, mod))
 
     @cmd(['timers'])
     async def _timers(app: Client, msg):
-        timers: list[dict] = await app.db.get('TimeTools', 'timers', [])
+        timers: list[dict] = await mod.db.get('timers', [])
         o = b("Активные таймеры:\n\n")
         for timer in timers:
             o += f"🪪 ID: {code(timer['id'])}\n"
@@ -72,7 +72,7 @@ async def main(app):
         sec_time = parse(str_time)
         if sec_time is None:
             return await msg.edit(f"<emoji id='5240241223632954241'>🚫</emoji> Неверный ввод данных!")
-        timers: list[dict] = await app.db.get("TimeTools", 'timers', [])
+        timers: list[dict] = await mod.db.get('timers', [])
         timer = {}
         timer['time'] = time.time() + sec_time
         timer['during'] = sec_time
@@ -83,7 +83,7 @@ async def main(app):
         if text:
             timer['text'] = text
         timers.append(timer)
-        await app.db.set('TimeTools', 'timers', timers)
+        await mod.db.set('timers', timers)
         await msg.edit(
             f"<emoji id='5413704112220949842'>⏰</emoji> Таймер {timer['id']} успешно установлен на {b(sec_to_str(sec_time))}\n"
             + ((b("Текст этикетки: ") + text) if text else '')
@@ -98,7 +98,7 @@ async def main(app):
         try: timer_id = int(msg.command[1])
         except ValueError: return await msg.edit(f"<emoji id='5240241223632954241'>🚫</emoji> Неверный ввод данных!\nВведи число!")
         
-        timers = await app.db.get('TimeTools', 'timers', [])
+        timers = await mod.db.get('timers', [])
         
         success = False
         
@@ -109,7 +109,7 @@ async def main(app):
                 break
         
         if success:
-            await app.db.set("TimeTools", 'timers', timers)
+            await mod.db.set('timers', timers)
             return await msg.edit(f"<emoji id='5206607081334906820'>✅</emoji> Таймер {b(timer_id)} успешно удален!")
         return await msg.edit(f"<emoji id='5210952531676504517'>❌</emoji> Таймер {b(timer_id)} не найден!")
 

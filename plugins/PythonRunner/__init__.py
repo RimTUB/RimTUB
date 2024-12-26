@@ -8,11 +8,11 @@ code_html = code
 
 
 helplist.add_module(
-    Module(
+    HModule(
         "PythonRunner",
         description='Запускает код на Python',
         author="built-in (@RimMirK на основе модуля от @KurimuzonAkuma)",
-        version='1.2.0'
+        version='1.2.1'
     ).add_command(
         Command(['py'], [Arg('Код')], "Запустить код")
     ).add_command(
@@ -24,13 +24,7 @@ helplist.add_module(
 
 async def aexec(code, app, msg, timeout=None):
     
-    
-    
-    
-    
-    
-    
-    
+
     import utils
     
     exec(
@@ -57,11 +51,11 @@ async def aexec(code, app, msg, timeout=None):
     return f.getvalue()
 
 
-async def main(app):
+async def main(app: Client, mod: Module):
 
     pv = sys.version.split()[0]
 
-    cmd = app.cmd(app.get_group(__package__))
+    cmd = mod.cmd
 
     @cmd(["py", "rpy"])
     async def python_exec(app, msg):
@@ -140,7 +134,7 @@ async def main(app):
                 )
                 await msg.edit(text, disable_web_page_preview=True)
         
-        app.add_task(__package__, _todo())
+        mod.add_task(_todo())
 
 
     @cmd(['eval'])
@@ -168,4 +162,4 @@ async def main(app):
 
             await msg.edit(code_html(code)  + ' = ' + code_html(result))
             
-        app.add_task(__package__, _todo())
+        mod.add_task(_todo())
