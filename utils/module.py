@@ -15,12 +15,12 @@ __all__ = [
 class SingletonByAttribute:
     _instances = {}
 
-    def __new__(cls, attr):
-        if (cls, attr) not in cls._instances:
+    def __new__(cls, *attrs):
+        if (cls, attrs) not in cls._instances:
             instance = super().__new__(cls)
-            cls._instances[(cls, attr)] = instance
-            instance.attr = attr
-        return cls._instances[(cls, attr)]
+            cls._instances[(cls, attrs)] = instance
+            instance.attr = attrs
+        return cls._instances[(cls, attrs)]
     
 
 
@@ -53,7 +53,7 @@ class Module(SingletonByAttribute):
 
     _inited = False
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, num: int):
         """
         Создает объект модуля.
 

@@ -1,4 +1,5 @@
 import hashlib
+from pathlib import Path
 from traceback import format_exc, print_exc
 from urllib.parse import urlparse
 import requests
@@ -145,8 +146,10 @@ async def dmf(app: Client, msg, notify, file_path, name, no_alert=False):
             return 
         return
     try:
-        isset = os.path.exists(f'plugins//{name}')
-        unpack_module(file_path, f'plugins/{name}/')
+        await notify(f"<emoji id='5386367538735104399'>⌛</emoji> Загружаю <b>{name}</b>")
+        mpath = Path(get_script_directory()) / 'plugins' / name
+        isset = os.path.exists(mpath)
+        unpack_module(file_path, mpath)
         os.remove(file_path)
         await app.load_module(name, restart=isset, exception=True, all_clients=True)    
 
@@ -198,8 +201,8 @@ async def main(app: Client, mod: Module):
                 "<emoji id='5386367538735104399'>⌛</emoji> Загружаю..."
             )
 
-            name = r.document.file_name.split(".", 1)[0]
-            path = await r.download(f'plugins//ModuleHelper//{r.document.file_name}')
+            name = r.document.file_name.rsplit(".", 1)[0]
+            path = await r.download(mod.path / r.document.file_name)
             await dmf(app, msg, msg.edit, path, name)
             
         except:
@@ -230,7 +233,7 @@ async def main(app: Client, mod: Module):
         if not module_path:
             return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
 
-        cap = f"❗️Модуль ТОЛЬКО на @RimTUB версии 2.0 и выше❗️\n\n"
+        cap = f"❗️Модуль ТОЛЬКО на @RimTUB версии 2.1 и выше❗️\n\n"
         try:
             cap += bq(
                 build_module_help_text(helplist.get_module(name.lower(), lower=True), False),
@@ -301,7 +304,7 @@ async def main(app: Client, mod: Module):
                 return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
             name = os.path.split(module_path)[-1]
 
-            disabled_modules = await mod.db.set('disabled_modules', [])
+            disabled_modules = await mod.db.get('disabled_modules', [])
             if name not in disabled_modules:
                 await app.stop_module(name)
                 disabled_modules.append(name)
@@ -322,7 +325,7 @@ async def main(app: Client, mod: Module):
             name = os.path.split(module_path)[-1]
 
             
-            disabled_modules: list = await mod.db.set('disabled_modules', [])
+            disabled_modules: list = await mod.db.get('disabled_modules', [])
             if name in disabled_modules:
                 await app.load_module(name, restart=False, exception=True)
                 disabled_modules.remove(name)

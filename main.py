@@ -31,8 +31,8 @@ from utils import get_script_directory, ModifyPyrogramClient, clients
 from sys import argv
 from telebot.async_telebot import AsyncTeleBot 
 
-version = '2.1'
-version_tuple = (2, 1, 0, 'release', 0)
+version = '2.1.1'
+version_tuple = (2, 1, 1, 'release', 0)
 
 
 
@@ -78,20 +78,23 @@ def start():
     asyncio.get_event_loop().create_task(bot.polling(non_stop=True))
 
     for client in clients:
-        asyncio.get_event_loop().create_task(client._start_on_readys())
+        asyncio.get_event_loop().run_until_complete(client._start_on_readys())
 
     is_restart = len(argv) > 1
 
     if not is_restart and PLAY_SOUND:
-        
-        from os import environ
-        environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+        try:
+            
+            from os import environ
+            environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-        from pygame.mixer import Sound, init
+            from pygame.mixer import Sound, init
 
-        init()
+            init()
 
-        Sound('started.mp3').play()
+            Sound('started.mp3').play()
+        except:
+            logger.warning("Can not play sound(", exc_info=True)
 
     if not is_restart and SHOW_NOTIFICATION:
         import plyer

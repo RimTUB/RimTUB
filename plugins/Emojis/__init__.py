@@ -1,7 +1,7 @@
 from utils import *
 
 
-__libs__ = ('bs4', 'beautifulsoup4'),
+__libs__ = ('bs4', 'beautifulsoup4'), 'lxml'
 
 async def main(app: Client, mod: Module):
 

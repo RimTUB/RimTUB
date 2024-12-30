@@ -203,7 +203,7 @@ class ModifyPyrogramClient(Client):
                     self.logger.debug(f"installing {to_install}...")
                     pip.main(['install', to_install])
 
-            await module.main(self, await Module(module_name).init(self))
+            await module.main(self, await Module(module_name, self.num).init(self))
 
             
 
@@ -264,7 +264,7 @@ class ModifyPyrogramClient(Client):
         :return: None
         """
         modules_path = os.path.join(self.WORKDIR, 'plugins')
-        mod = await Module('ModuleHelper').init(self)
+        mod = await Module('ModuleHelper', self.num).init(self)
         disabled_modules = await mod.db.get('disabled_modules', [])
         self.logger.debug(f"Disabled modules: {', '.join(disabled_modules)}")
         for _, folders, __ in os.walk(modules_path):
