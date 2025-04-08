@@ -190,8 +190,8 @@ async def start():
             await asyncio.sleep(Config.CLEANUP_EXPIRED_PICKLE_STORAGE_FILES_INTERVAL)
             
 
-    # ev = asyncio.get_event_loop()
-    # ev.create_task(storage_cleaner())
+    ev = asyncio.get_event_loop()
+    ev.create_task(storage_cleaner())
 
     for client in clients:
         await client._start_on_readys()
