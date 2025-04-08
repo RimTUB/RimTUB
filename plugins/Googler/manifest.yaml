@@ -1,0 +1,35 @@
+module_name: Googler
+version: 1.0.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+description: Поиск в Google
+author: "built-in (@RimMirK)"
+sections:
+    _: 
+        description:
+        commands:
+            - names: [g, google]
+              arguments:
+                  - {text: запрос, req: Yes}
+                  - {text: -c кол-во результатов, req: No}
+                  - {text: -r регион, req: No}
+                  - {text: -l язык, req: No}
+                  - {text: -unsafe (выкл безопасный режим), req: No}
+              description: Загуглить
+            - names: [glang]
+              arguments:
+                  - {text: код языка, req: Yes}
+              description: Установить язык результатов
+            - names: [gregion, greg]
+              arguments:
+                  - {text: код страны/региона, req: Yes}
+              description: Установить регион результатов
+
+requirements:
+    googlesearch-python:
+        check: import googlesearch
+        install: googlesearch-python==1.3.0
+

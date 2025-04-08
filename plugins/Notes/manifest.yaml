@@ -1,0 +1,31 @@
+module_name: Notes
+version: 2.0.2(rimtub-2.1.1)
+native_RimTUB_version: 2.1
+available_RimTUB_versions:
+    - 2.1
+online_check_RimTUB_versions: Off
+description: "заметки 2.0"
+author: "built-in (@RimMirK)"
+sections:
+    _: 
+        description: 
+        commands:
+            - names: [addnote, setnote]
+              arguments:
+                  - {text: название, req: Yes}
+                  - {text: ответ, req: Yes}
+              description: создать заметку
+            - names: [note]
+              arguments:
+                  - {text: название, req: Yes}
+              description: вывести заметку
+            - names: [notes, mynotes]
+              arguments: ~
+              description: список заметок
+            - names: [delnote]
+              arguments:
+                  - {text: название, req: Yes}
+              description: удалить заметку
+
+              
+requirements: ~

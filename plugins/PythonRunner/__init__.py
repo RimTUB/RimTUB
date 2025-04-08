@@ -7,20 +7,7 @@ from utils import *
 code_html = code
 
 
-helplist.add_module(
-    HModule(
-        "PythonRunner",
-        description='Запускает код на Python',
-        author="built-in (@RimMirK на основе модуля от @KurimuzonAkuma)",
-        version='1.2.1'
-    ).add_command(
-        Command(['py'], [Arg('Код')], "Запустить код")
-    ).add_command(
-        Command(['rpy'], [Arg('Ответ на сообщение/цитата')], "Запускает код из отвеченного сообщения")
-    ).add_command(
-        Command(['eval'], [Arg('Выражение')], "Запускает eval()")
-    )
-)
+
 
 async def aexec(code, app, msg, timeout=None):
     
@@ -34,7 +21,7 @@ async def aexec(code, app, msg, timeout=None):
         " r = msg.reply_to_message;"
         " u = msg.from_user;"
         " p = print;"
-        " q = msg.quote_text;"
+        " q = getattr(msg.quote, 'text', None);"
         " t = msg.message_thread_id;"
         " import pyrogram, utils, asyncio;"
         " from asyncio import sleep;"
@@ -66,7 +53,7 @@ async def main(app: Client, mod: Module):
             if msg.command[0] == "rpy":
                 if not msg.reply_to_message:
                     return await msg.edit_text(b("Ответь на сообщение!"))
-                code = msg.quote_text or msg.reply_to_message.text or msg.reply_to_message.caption
+                code = getattr(msg.quote, 'text', None) or msg.reply_to_message.text or msg.reply_to_message.caption
             else:
                 code = (msg.text or msg.caption).split(maxsplit=1)[1]
 
@@ -144,7 +131,7 @@ async def main(app: Client, mod: Module):
             r = msg.reply_to_message
             u = msg.from_user
             p = print
-            q = msg.quote_text
+            q = getattr(msg.quote, 'text', None)
             ru = getattr(r, 'from_user', None)
             t = msg.message_thread_id
             import pyrogram, utils, asyncio

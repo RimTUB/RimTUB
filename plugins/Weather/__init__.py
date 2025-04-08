@@ -2,24 +2,13 @@ from pyrogram.types import Message as M
 
 from utils import *
 
-helplist.add_module(
-    HModule(
-        __package__,
-        description="Погода",
-        author='built-in (@RimMirK)',
-        version='1.0.1'
-    ).add_command(
-        Command("wt", [Arg('город')], 'показать погоду')
-    )
-)
+import python_weather
 
-__libs__ = 'python_weather', ('googletrans', 'googletrans==3.1.0a0')
+from googletrans import Translator
+
 
 async def main(app: Client, mod: Module):
 
-    import python_weather
-
-    from googletrans import Translator
     
     cmd = mod.cmd
 

@@ -1,0 +1,57 @@
+module_name: CodeExecutor
+version: 1.0
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+description: Может запускать код на различных языках программирования
+author: "built-in (@korsany)"
+sections:
+    _: 
+        description:
+        commands:
+            - names: [exec]
+              arguments:
+                  - {text: lang, req: Yes}
+                  - {text: code, req: Yes}
+              description: Запустить код на непопулярном языке
+            - names: [epy]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на Python 3
+            - names: [ejs]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на JavaScript
+            - names: [elua]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на Lua
+            - names: [ecsh]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на C#
+            - names: [ec]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на C
+            - names: [ecpp]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на C++
+            - names: [ers]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на Rust
+            - names: [ejava]
+              arguments:
+                  - {text: code, req: Yes}
+              description: Запустить код на Java
+
+
+requirements:
+    aiohttp:
+        check: import aiohttp; assert aiohttp.__version__ == "3.11.16"
+        install: aiohttp==3.11.16
+

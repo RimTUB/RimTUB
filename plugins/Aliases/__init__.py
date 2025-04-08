@@ -2,22 +2,6 @@ from utils import *
 
 
 
-helplist.add_module(
-    HModule(
-        __package__,
-        description='Управление алиасами комманд',
-        author='built-in (@RimMirK)',
-        version='beta_1.0.1'
-    ).add_command(
-        Command('addalias', [Arg('алиас'), Arg("Команда")], 'Добавить алиас')
-    ).add_command(
-        Command('delalias', [Arg('алиас')], 'Удалить алиас')
-    ).add_command(
-        Command('aliases', [], 'Посмотреть алиасы')
-    )
-)
-
-
 def find_callback_by_command(app, command):
     
     groups = app.dispatcher.groups
@@ -65,12 +49,12 @@ async def main(app: Client, mod: Module):
                 await mod.db.set('aliases', aliases)
 
                 await msg.edit(f"Алиас добавлен!\n"
-                               f"<code>{PREFIX}{alias}</code>  <code>-></code>  "
-                               f"<code>{PREFIX}{command}</code>")
+                               f"<code>{Config.PREFIX}{alias}</code>  <code>-></code>  "
+                               f"<code>{Config.PREFIX}{command}</code>")
             else:
                 await msg.edit("Команда не найдена!")
         except:
-            await msg.edit(f"Используй <code>{PREFIX}{msg.command[0]}</code> " + escape("<алиас> <команда>"))
+            await msg.edit(f"Используй <code>{Config.PREFIX}{msg.command[0]}</code> " + escape("<алиас> <команда>"))
     
     @cmd('delalias')
     async def _delalias(_, msg):
@@ -83,13 +67,13 @@ async def main(app: Client, mod: Module):
 
             await msg.edit(f"Алиас <b>{alias}</b> удален! Перезагрузи юб для приминения!")
         except:
-            await msg.edit(f"Используй <code>{PREFIX}{msg.command[0]}</code> " +escape("<алиас>"))
+            await msg.edit(f"Используй <code>{Config.PREFIX}{msg.command[0]}</code> " +escape("<алиас>"))
 
     @cmd('aliases')
     async def _aliases(_, msg):
         aliases: dict = await mod.db.get('aliases', {})
         t = b("Твои алиасы:\n")
         for alias, command in aliases.items():
-            t += code(PREFIX+alias) + '  ' + code('->') + '  ' + code(PREFIX+command) + '\n'
+            t += code(Config.PREFIX+alias) + '  ' + code('->') + '  ' + code(Config.PREFIX+command) + '\n'
         await msg.edit(t)
 

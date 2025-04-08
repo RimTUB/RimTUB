@@ -8,15 +8,16 @@ __all__ = [
   'unpack_module'
 ]
 
-def pack_module(module_dir: str, output_filename: int, ignore_file='.rimtubignore') -> str:
+def pack_module(module_dir: str, output_filename: str, ignore_file='.rimtubignore') -> str:
     """
     Запаковывает модуль в zip архив
 
     Создает zip-архив из указанной папки, при этом игнорируя файлы и папки,
     которые соответствуют паттернам из файла ignore_file (по умолчанию '.rimtubignore').
+    Однако, файл 'manifest.yaml' всегда включается в архив.
 
     :param str module_dir: Путь к папке модуля
-    :param int output_filename: Имя выходного файла
+    :param str output_filename: Имя выходного файла
     :param str ignore_file: Имя файла с паттернами игнорирования, defaults to '.rimtubignore'
     :raises ValueError: Если указанный module_dir не является папкой.
     :return str: Путь к созданному zip-архиву.
@@ -25,7 +26,7 @@ def pack_module(module_dir: str, output_filename: int, ignore_file='.rimtubignor
         raise ValueError(f"{module_dir} не является папкой")
 
     ignored_patterns = []
-    include_patterns = []
+    include_patterns = ['manifest.yaml', '.rimtubignore']  # manifest.yaml всегда включается
 
     ignore_path = os.path.join(module_dir, ignore_file)
     if os.path.exists(ignore_path):
@@ -40,11 +41,10 @@ def pack_module(module_dir: str, output_filename: int, ignore_file='.rimtubignor
                     ignored_patterns.append(ignore_item)
 
     def should_ignore(relative_path):
+        if relative_path in include_patterns:
+            return False
         for pattern in ignored_patterns:
             if fnmatch.fnmatch(relative_path, pattern):
-                for include_pattern in include_patterns:
-                    if fnmatch.fnmatch(relative_path, include_pattern):
-                        return False
                 return True
         return False
 
@@ -53,17 +53,18 @@ def pack_module(module_dir: str, output_filename: int, ignore_file='.rimtubignor
             for file in files:
                 file_path = os.path.join(root, file)
                 relative_path = os.path.relpath(file_path, start=module_dir)
-                
+
                 if should_ignore(relative_path):
                     continue
 
                 info = zipfile.ZipInfo(relative_path)
-                info.date_time = (1980, 1, 1, 0, 0, 0) 
+                info.date_time = (1980, 1, 1, 0, 0, 0)
 
                 with open(file_path, 'rb') as f:
                     zipf.writestr(info, f.read())
-        
+
     return output_filename
+
 
 def unpack_module(input_filename, output_dir):
     if not os.path.isfile(input_filename):

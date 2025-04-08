@@ -1,33 +1,11 @@
 from pyrogram.types import Message
 from utils import *
+from googlesearch import search
+from urllib.parse import urlparse
 
-__libs__ = ('googlesearch', 'googlesearch-python'),
-
-helplist.add_module(
-    HModule(
-        __package__,
-        description='Поиск в Google',
-        author='built-in (@RimMirK)',
-        version='1.0.1'
-    ).add_command(
-        Command(['g', 'google'], [
-            Argument('запрос'),
-            Argument('-c кол-во результатов', False),
-            Argument('-r регион',             False),
-            Argument('-l язык',               False),
-            Argument('-unsafe (выкл безопасный режим)', False),
-        ], "Загуглить" )
-    ).add_command(
-        Command('glang', [Argument("код языка")], "Установить язык результатов")
-    ).add_command(
-        Command(['gregion', 'greg'], [Argument("код страны/региона")], "Установить регион результатов")
-    )
-)
 
 async def main(app: Client, mod: Module):
 
-    from googlesearch import search
-    from urllib.parse import urlparse
 
     cmd = mod.cmd
 

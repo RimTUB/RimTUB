@@ -6,26 +6,10 @@ from pytimeparse2 import parse
 
 from utils import *
 
+import requests
+from zoneinfo import ZoneInfo
+from geopy.geocoders import Nominatim
 
-__libs__ = ('pytz', 'pytz==2024.2'), ('timezonefinder', 'timezonefinder==6.5.2'), ('geopy', 'geopy==2.4.1')
-
-
-helplist.add_module(
-    HModule(
-        __package__,
-        description="Работа со временем\n\n* - примеры указания времени: 25s, 1d, 1h30m, 7d4s\n\nДля корректной работы включи уведомления у личного бота!",
-        author='built-in (@RimMirK)',
-        version='1.0.1'
-    ).add_command(
-        Command(['timer'], [Argument('время*'), Argument("Текст этикетки", False)], 'Завести таймер')
-    ).add_command(
-        Command(['timers'], [], 'Список таймеров')
-    ).add_command(
-        Command(['stoptimer'], [Argument('ID Таймера')], 'остановить таймер')
-    ).add_command(
-        Command(['gettime'], [Argument("Город")], 'Узнать время в городе')
-    )
-)
 
 async def worker(app, mod):
     while True:
@@ -40,9 +24,6 @@ async def worker(app, mod):
 
 async def main(app: Client, mod: Module):
 
-    import pytz
-    from timezonefinder import TimezoneFinder
-    from geopy.geocoders import Nominatim
 
     cmd = mod.cmd
 
@@ -126,22 +107,38 @@ async def main(app: Client, mod: Module):
     async def _gettime(app, msg):
         if len(msg.command) == 1:
             return await msg.edit(f"<emoji id='5240241223632954241'>🚫</emoji> Неверный ввод данных!")
-        
+
         await msg.edit("<emoji id='5231012545799666522'>🔍</emoji> Ищу Ваш город...")
-        
+
         town = msg.text.split(maxsplit=1)[1]
 
         geolocator = Nominatim(user_agent="timezone_finder")
         location = geolocator.geocode(town)
+
         if location is None:
             return await msg.edit(f"<emoji id='5210952531676504517'>❌</emoji> Город {b(town)} не найден!")
-        tf = TimezoneFinder()
-        timezone_str = tf.timezone_at(lng=location.longitude, lat=location.latitude)
-        timezone = pytz.timezone(timezone_str)
-        current_time = datetime.now(timezone)
-        utc_offset = pnum(current_time.utcoffset().total_seconds() / 3600)
-        utc_offset = convert_to_time(utc_offset)
-        str_time = current_time.strftime('%Y.%m.%d\xa0%H:%M')
-        await msg.edit(f"<emoji id='5397782960512444700'>📌</emoji> Текущее время в городе {b(town)} {i(f'({timezone_str}, UTC{utc_offset})')}: {b(str_time)}")
 
-        
+        username = "RimTUB"
+        geo_url = f"http://api.geonames.org/searchJSON?q={town}&maxRows=1&username={username}"
+        geo_res = requests.get(geo_url).json()
+
+        if not geo_res["geonames"]:
+            return await msg.edit(f"<emoji id='5210952531676504517'>❌</emoji> Город {b(town)} не найден!")
+
+        lat = geo_res["geonames"][0]["lat"]
+        lon = geo_res["geonames"][0]["lng"]
+
+        # Получаем таймзону
+        tz_url = f"http://api.geonames.org/timezoneJSON?lat={lat}&lng={lon}&username={username}"
+        tz_res = requests.get(tz_url).json()
+
+        timezone_str = tz_res.get("timezoneId")
+        if not timezone_str:
+            return await msg.edit(f"<emoji id='5210952531676504517'>❌</emoji> Не удалось найти таймзону для города {b(town)}!")
+
+        now = datetime.now(ZoneInfo(timezone_str))
+        utc_offset = now.utcoffset().total_seconds() / 3600
+        utc_offset = f"+{int(utc_offset):02d}:00" if utc_offset >= 0 else f"-{int(abs(utc_offset)):02d}:00"
+        str_time = now.strftime('%Y.%m.%d\xa0%H:%M')
+
+        await msg.edit(f"<emoji id='5397782960512444700'>📌</emoji> Текущее время в городе {b(town)} {i(f'({timezone_str}, UTC{utc_offset})')}: {b(str_time)}")

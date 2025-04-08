@@ -1,0 +1,32 @@
+module_name: Aliases
+version: beta_1.0.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+
+description: |
+    Управление алиасами команд
+
+author: "built-in (@RimMirK)"
+
+sections:
+    _: 
+        description: 
+        commands:
+            - names: [addalias]
+              arguments:
+                  - {text: "алиас", req: Yes}
+                  - {text: "Команда", req: Yes}
+              description: Добавить алиас
+            - names: [delalias]
+              arguments:
+                  - {text: "алиас", req: Yes}
+              description: Удалить алиас
+            - names: [aliases]
+              arguments: ~
+              description: Посмотреть алиасы
+        features: ~
+
+requirements: ~

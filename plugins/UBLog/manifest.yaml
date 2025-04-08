@@ -1,0 +1,27 @@
+module_name: UBLog
+version: 1.0.2
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: Просмотр логов RimTUB
+author: "built-in (@RimMirK)"
+sections:
+    _:
+        description: Команды для работы с логами RimTUB
+        commands:
+            - names: [logtail]
+              arguments:
+                  - {text: число строк, req: false}
+              description: Получить последние n строк из лога
+            - names: [glog]
+              arguments:
+                  - {text: имя файла, req: false}
+              description: Получить лог
+            - names: [glogs]
+              arguments: ~
+              description: Посмотреть все файлы лога
+            - names: [dellogs]
+              arguments: ~
+              description: Удалить все логи
+requirements: ~

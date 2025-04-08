@@ -1,9 +1,11 @@
 from difflib import get_close_matches
 from typing import Any, Dict, List, Self
+from .scripts import singleton
 
 
 __all__ = [
     'Argument',
+    'Section',
     'HModule',
     'Command',
     'Feature',
@@ -11,21 +13,7 @@ __all__ = [
 ]
 
 
-def singleton(cls):
-    """
-    Декоратор для реализации паттерна Singleton.
 
-    :param type cls: Класс, для которого нужно создать единственный экземпляр.
-    :return: Функция-обертка для получения единственного экземпляра класса.
-    """
-    instances = {}
-
-    def get_instance(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-
-    return get_instance
 
 class Argument:
     """
@@ -80,9 +68,80 @@ class Feature:
         self.description = description
 
 
+class Section:
+    """
+    Класс, представляющий секцию модуля. 
+
+    :param str name: Имя секции.
+    :param str description: Описание секции.
+    """
+    name: str
+    description: str
+    commands: List[Command]
+    features: List[Feature]
+
+    def __init__(self, name: str, description: str = "") -> None:
+        self.name = name
+        self.description = description
+        self.commands = []
+        self.features = []
+
+    def add_command(self, command: Command) -> Self:
+        """
+        Добавляет команду в секцию.
+
+        :param Command command: Команда для добавления.
+        :return Self: Текущая секция.
+        """
+        self.commands.append(command)
+        return self
+
+    def add_feature(self, feature: Feature) -> Self:
+        """
+        Добавляет функциональность в секцию.
+
+        :param Feature feature: Функциональность для добавления.
+        :return Self: Текущая секция.
+        """
+        self.features.append(feature)
+        return self
+
+    def get_commands(self) -> List[Command]:
+        """
+        Возвращает список команд секции.
+
+        :return List[Command]: Список команд.
+        """
+        return self.commands
+
+    def get_features(self) -> List[Feature]:
+        """
+        Возвращает список функциональностей секции.
+
+        :return List[Feature]: Список функциональностей.
+        """
+        return self.features
+
+    def get_commands_count(self) -> int:
+        """
+        Возвращает количество команд в секции.
+
+        :return int: Количество команд.
+        """
+        return len(self.commands)
+
+    def get_features_count(self) -> int:
+        """
+        Возвращает количество функциональностей в секции.
+
+        :return int: Количество функциональностей.
+        """
+        return len(self.features)
+    
+
 class HModule:
     """
-    Класс, представляющий модуль с командами и функциональностью.
+    Класс, представляющий модуль с командами, секциями и функциональностями.
 
     :param str name: Имя модуля.
     :param str|None description: Описание модуля, defaults to ''.
@@ -91,82 +150,72 @@ class HModule:
     :param List[Command] commands: Список команд модуля, defaults to None.
     :param List[Feature] features: Список функциональностей модуля, defaults to None.
     """
-    commands: List[Command]
-    features: List[Feature]
+    sections: Dict[str, Section]
     name: str
     description: str
     author: str
     version: Any
 
-    def __init__(
-        self: Self,
-        name: str,
-        *,
-        description: str | None = '',
-        author: str | None = '',
-        version: Any | None = None,
-        commands: List[Command] = None,
-        features: List[Feature] = None
-    ) -> None:
-        self.commands = commands if commands else []
-        self.features = features if features else []
-        self.name = name.removeprefix('plugins.')
+    def __init__(self, name, *, description='', author='', version=None, ok=False):
+        if not ok:
+            raise RuntimeError()
+        self.name = name
         self.description = description
         self.author = author
         self.version = version
+        self.sections = {}
 
-    def add_command(self: Self, command: Command, /) -> Self:
+    def add_section(self, section: Section) -> Section:
         """
-        Добавляет команду в модуль.
+        Добавляет секцию в модуль.
 
-        :param Command command: Команда для добавления.
-        :return Self: Текущий экземпляр модуля.
+        :param name: Имя секции.
+        :param description: Описание секции.
+        :return: Добавленная секция.
         """
-        self.commands.append(command)
-        return self
-    
+        self.sections[section.name] = section
+        return section
+
+    def get_section(self, name: str) -> Section | None:
+        """
+        Возвращает секцию по имени.
+
+        :param str name: Имя секции.
+        :return Section | None: Найденная секция или None.
+        """
+        return self.sections.get(name)
+
+    def get_sections_count(self) -> int:
+        """
+        Возвращает количество секций в модуле.
+
+        :return int: Количество секций.
+        """
+        return len(self.sections)
+
+    def get_sections(self) -> Dict[str, Section]:
+        """
+        Возвращает словарь всех секций модуля.
+
+        :return Dict[str, Section]: Словарь секций.
+        """
+        return self.sections
+
     def get_commands_count(self) -> int:
         """
-        Возвращает количество команд в модуле.
+        Возвращает общее количество команд во всех секциях модуля.
 
-        :return int: Количество команд.
+        :return int: Общее количество команд.
         """
-        return len(self.commands)
-
-    def get_commands(self) -> List[Command]:
-        """
-        Возвращает список команд модуля.
-
-        :return List[Command]: Список команд.
-        """
-        return self.commands
-    
-    def add_feature(self: Self, feature: Feature, /) -> Self:
-        """
-        Добавляет функциональность в модуль.
-
-        :param Feature feature: Функциональность для добавления.
-        :return Self: Текущий экземпляр модуля.
-        """
-        self.features.append(feature)
-        return self
+        return sum(section.get_commands_count() for section in self.sections.values())
     
     def get_features_count(self) -> int:
         """
-        Возвращает количество функциональностей в модуле.
+        Возвращает общее количество функциональностей во всех секциях модуля.
 
-        :return int: Количество функциональностей.
+        :return int: Общее количество функциональностей.
         """
-        return len(self.features)
-
-    def get_features(self) -> List[Feature]:
-        """
-        Возвращает список функциональностей модуля.
-
-        :return List[Feature]: Список функциональностей.
-        """
-        return self.features
-
+        return sum(section.get_features_count() for section in self.sections.values())
 
 @singleton
 class HelpList:
@@ -176,9 +225,12 @@ class HelpList:
     Хранит все модули и предоставляет методы для их добавления и получения.
     """
     modules: Dict[str, HModule]
+    _inited = False
 
     def __init__(self) -> None:
-        self.modules = {}
+        if not self._inited:
+            self.modules = {}
+            self._inited = True
     
     def add_module(self, module: HModule, /) -> Self:
         """

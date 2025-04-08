@@ -1,14 +1,58 @@
 from hashlib import sha256
+from pathlib import Path
 from typing import Callable, Coroutine, Iterable, List
 import asyncio, gc, importlib, itertools, os, sys, pip
 from types import FunctionType
 from logging import Logger
 
-from telebot.async_telebot import AsyncTeleBot
+import pyrogram
+
+import inspect
+
+
+from pyromod import patch_into, should_patch
+import pyromod
+
+@patch_into(pyrogram.handlers.callback_query_handler.CallbackQueryHandler)
+class NCallbackQueryHandler():
+    
+    @should_patch()
+    async def resolve_future_or_callback(
+        self, client, query, *args
+    ):
+        listener_does_match, listener = await self.check_if_has_matching_listener(
+            client, query
+        )
+
+        if listener and listener_does_match:
+            client.remove_listener(listener)
+
+            if listener.future and not listener.future.done():
+                listener.future.set_result(query)
+
+                raise pyrogram.StopPropagation
+            elif listener.callback:
+                if inspect.iscoroutinefunction(listener.callback):
+                    await listener.callback(client, query, *args)
+                else:
+                    listener.callback(client, query, *args)
+
+                raise pyrogram.StopPropagation
+            else:
+                raise ValueError("Listener must have either a future or a callback")
+        else:
+            await self.original_callback(query, *args)
+
 
 from pyromod.config import config
+
+from utils.helplist import *
+from utils.scripts import get_root, install_requirements, read_yaml
 config.disable_startup_logs = True  # settings in this shit (pyromod) don't work
 from pyromod import Client
+
+from pyrogram.types import InlineKeyboardMarkup as Buttons, InlineKeyboardButton as Button
+
 
 from .misc import NCmd, helplist, clients
 from .exceptions import LoadError
@@ -29,6 +73,7 @@ class ModifyPyrogramClient(Client):
         num (int): Номер клиента.
         logger (Logger): Логгер для ведения журнала.
         bot (AsyncTeleBot): Асинхронный TeleBot.
+        root (pathlib.Path): путь к корню RimTUB
         bot_username (str): Имя пользователя бота.
         _module_tasks (dict[str, asyncio.Task]): Словарь с задачами модулей.
         _group_counter (Iterable): Счетчик групп.
@@ -43,13 +88,14 @@ class ModifyPyrogramClient(Client):
     critical: Logger.critical
     fatal: Logger.fatal  # type: ignore
     log: Logger.log
-    bot: AsyncTeleBot
+    bot: Client
     bot_username: str
     _module_tasks: dict[str, asyncio.Task]
     _group_counter: Iterable
     _module_groups: dict[int, List[str]]
+    
 
-    def __init__(self, *args, num: int, logger: Logger, bot: AsyncTeleBot, **kwargs):
+    def __init__(self, *args, num: int, logger: Logger, bot: Client, **kwargs):
         """
         Инициализирует экземпляр ModifyPyrogramClient.
 
@@ -60,22 +106,16 @@ class ModifyPyrogramClient(Client):
         :param kwargs: Дополнительные именованные аргументы для инициализации.
         """
         
-        if not os.path.exists(kwargs.get('workdir')):
-            os.makedirs(kwargs.get('workdir'))
+        self.root = get_root(True)
+        
 
         super().__init__(*args, **kwargs)
 
         self.num = num
         self.app_hash = sha256(bytes(str(self.phone_number).encode())).hexdigest()
 
+
         self.logger = logger
-        self.info = logger.info
-        self.warning = logger.warning
-        self.error = logger.error
-        self.debug = logger.debug
-        self.critical = logger.critical
-        self.fatal = logger.fatal
-        self.log = logger.log
 
         self.bot = bot
 
@@ -83,6 +123,8 @@ class ModifyPyrogramClient(Client):
         self._group_counter = itertools.count()
         self._module_groups = {}
         self._on_ready_funcs = []
+        
+    
     
     async def _load_dialogs(self):
         """
@@ -92,7 +134,7 @@ class ModifyPyrogramClient(Client):
         """
         [_ async for _ in self.get_dialogs()]
 
-    def start(self, *args, **kwargs):
+    async def start(self, *args, **kwargs):
         """
         Запускает клиента и загружает необходимые модули.
 
@@ -100,13 +142,15 @@ class ModifyPyrogramClient(Client):
         :param kwargs: Именованные аргументы для родительского метода.
         :return: Результат вызова метода родительского класса.
         """
-        r = super().start(*args, **kwargs)
+        self.loop = asyncio.get_event_loop()
+        
+        r = await super().start(*args, **kwargs)
 
-        self.add_task('_core', self._load_dialogs())
+        await self._load_dialogs()
 
-        self.bot_username = self.loop.run_until_complete(self.bot.get_me()).username
+        self.bot_username = self.bot.me.username
 
-        self.loop.run_until_complete(self.load_modules())
+        await self.load_modules()
         self.logger.debug("Modules loaded!")
 
         return r
@@ -174,6 +218,20 @@ class ModifyPyrogramClient(Client):
             for client in clients:
                 await client.load_module(module_name, restart=restart, exception=exception, unload_help=unload_help, all_clients=False)
             return
+
+        try:
+            manifest = read_yaml(Path(get_root(), 'plugins', module_name, 'manifest.yaml')) or {}
+        except FileNotFoundError:
+            self.logger.error(f"manifest.yaml does not found in module {module_name}. Skipping...")
+            return
+
+        if not manifest:
+            self.logger.error(f"{Path('plugins', module_name, 'manifest.yaml')} Not found! Skipping...")
+            return
+
+        if manifest.get('requirements'):
+            install_requirements(manifest.get('requirements') or [])
+
         try:
             if restart:
                 await self.stop_module(module_name, unload_help=unload_help, delete_from_sys_modules=False)
@@ -189,28 +247,45 @@ class ModifyPyrogramClient(Client):
                 
             else:
                 module = importlib.import_module(f'plugins.{module_name}')
-            
-            libs = getattr(module, '__libs__', [])
-            if isinstance(libs, str): libs = [libs]
-            for lib in libs:
-                if isinstance(lib, str):
-                    to_import, to_install = lib.split('==')[0], lib
-                else:
-                    to_import, to_install = lib
-                try:
-                    importlib.import_module(to_import)
-                except ImportError:
-                    self.logger.debug(f"installing {to_install}...")
-                    pip.main(['install', to_install])
 
-            await module.main(self, await Module(module_name, self.num).init(self))
+
+            helplist = HelpList()
+                
+            hmod = HModule(
+                manifest.get('module_name'),
+                description=manifest.get('description'),
+                author=manifest.get('author'),
+                version=manifest.get('version'),
+                ok=True
+            )
+
+            for name, section in manifest.get('sections', {}).items():
+                section = section or {}
+                sect = Section(name, section.get('description'))
+                for command in section.get('commands') or []:
+                    args = []
+                    for arg in command.get('arguments') or []:
+                        args.append(Argument(arg.get('text', ''), required=arg.get('req', True)))
+                    sect.add_command(Command(command.get('names', []), args, command.get('description', '')))
+                for feature in section.get('features') or []:
+                    sect.add_feature(Feature(feature.get('title'), feature.get('description')))
+                hmod.add_section(sect)
+                    
+            helplist.add_module(hmod)
+
+        
+            
+
+
+            mod = await Module(module_name, self.num).init(self)
+            await module.main(self, mod)
 
             
 
         except Exception as e:
+            self.logger.error(f"Error in module {module_name}: {e}", exc_info=True)
             if exception:
                 raise LoadError from e
-            self.logger.error(f"Error in module {module_name}: {e}", exc_info=True)
 
         else:
             self.logger.debug(f'Module loaded: {module_name}')
@@ -329,3 +404,6 @@ class ModifyPyrogramClient(Client):
         groups.append(group)
         self._module_groups[module] = groups
         return group
+
+
+

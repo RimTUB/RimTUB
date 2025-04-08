@@ -1,0 +1,28 @@
+# название модуля 
+module_name: Buttons
+
+# версия модуля
+version: 2.2-1.0.0-1
+native_RimTUB_version: 2.2 # оригинальная версия RimTUB на которую писался модуль
+available_RimTUB_versions: # версии RimTUB на которых работает модуль
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off # чекать ли онлайн доступные версии ЮБ (в разработке)
+
+description: | # описание модуля
+    Тестовый модуль для разработчиков
+    Тут примеры кнопок 
+
+# разраб
+author: built-in (@RimMirK)
+
+
+# Хелплист
+sections:
+    _: # основная секция
+        description: # Описание секции (отсутствует)
+        commands: # команды
+            - names: [butest] # список алиасов
+              description: Открыть меню кнопок # описание команды
+
+              

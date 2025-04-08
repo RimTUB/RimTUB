@@ -1,6 +1,6 @@
 import logging
 import os
-import shutil
+from pathlib import Path
 from pyrogram import __version__
 from pyrogram.types import Message as M
 
@@ -9,22 +9,6 @@ from utils import *
 from utils.html_tags import blockquote
 from utils.scripts import find_file, get_tree
 
-helplist.add_module(
-    HModule(
-        __package__,
-        description="Просмотр логов RimTUB",
-        author="built-in (@RimMirK)",
-        version='1.0.2'
-    ).add_command(
-        Command(['logtail'], [Arg("число строк", False)], "Получить последние n строк из лога")
-    ).add_command(
-        Command(['glog'], [Arg("имя файла", False)], "получить лог")
-    ).add_command(
-        Command(['glogs'], [], "Посмотреть все файлы лога")
-    ).add_command(
-        Command(['dellogs'], [], "Удалить все логи")
-    )
-)
 
 async def main(app: Client, mod: Module):
 
@@ -33,7 +17,7 @@ async def main(app: Client, mod: Module):
     @cmd(['logtail'])
     async def _ltail(_, msg: M):
         lines = int(get_args(msg.text, 10))
-        with open('logs\last_run.log', 'r', encoding='utf-8') as f:
+        with open(Path(get_root(), 'logs', 'last_run.log'), 'r', encoding='utf-8') as f:
             r = tail(f, lines)
         link = await paste(r)
         await msg.edit(f"Последние {lines} строк: {link}")

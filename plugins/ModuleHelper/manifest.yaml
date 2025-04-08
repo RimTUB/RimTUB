@@ -1,0 +1,42 @@
+module_name: ModuleManager
+version: 2.1.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+description: Ваш помощник модулей
+author: "built-in (@RimMirK)"
+sections:
+    _:
+        description: |
+            Модуль для управления другими модулями.
+            Возможности включают скачивание, отправку, удаление, перезагрузку и включение/выключение модулей.
+        commands:
+            - names: [dmf]
+              arguments:
+                  - {text: ответ с <u>файлом</u> модуля, req: Yes}
+              description: Скачать/обновить модуль
+            - names: [sm]
+              arguments:
+                  - {text: Название модуля, req: Yes}
+              description: Отправить модуль
+            - names: [delm]
+              arguments:
+                  - {text: Название модуля, req: Yes}
+              description: Удалить модуль
+            - names: [relm]
+              arguments:
+                  - {text: Название модуля, req: Yes}
+              description: Перезагрузить модуль
+            - names: [offm, stopm]
+              arguments:
+                  - {text: Название модуля, req: Yes}
+              description: Выключить модуль
+            - names: [onm, startm]
+              arguments:
+                  - {text: Название модуля, req: Yes}
+              description: Включить модуль
+
+              
+requirements: ~

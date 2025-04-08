@@ -1,0 +1,33 @@
+module_name: Translate
+version: 1.1.4
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: Google переводчик
+author: "built-in (@RimMirK)"
+sections:
+    _:
+        description: Команды для перевода текста
+        commands:
+            - names: [tr, translate]
+              arguments:
+                  - {text: целевой язык, req: true}
+                  - {text: текст/ответ, req: true}
+              description: Перевести текст
+            - names: [trf, translatefrom, trfrom]
+              arguments:
+                  - {text: Язык оригинала, req: true}
+                  - {text: целевой язык, req: true}
+                  - {text: текст/ответ, req: true}
+              description: Перевести текст
+            - names: [trlangs]
+              arguments: []
+              description: Список языков и их код
+
+
+requirements:
+    googletrans:
+        check: import googletrans; assert googletrans.__version__ == "3.1.0-alpha"
+        install: googletrans==3.1.0a0
+

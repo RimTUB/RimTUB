@@ -13,7 +13,7 @@ bot_uptime = perf_counter()
 clients = []
 
 from pyrogram import filters
-from config import PREFIX
+from utils import Config
 
 groups = []
 
@@ -30,10 +30,10 @@ class NCmd:
         self.group = group
         self.client = client
     
-    def __call__(self, commands: list) -> Any:
+    def __call__(self, commands: str|list) -> Any:
         def wrapper(func):
             @self.client.on_message(
-                filters.command(commands, prefixes=[PREFIX, PREFIX+' ']) & filters.me
+                filters.command(commands, prefixes=[Config.PREFIX, Config.PREFIX+' ']) & filters.me
                 & ~filters.forwarded,
                 group=self.group
             )

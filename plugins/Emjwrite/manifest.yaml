@@ -1,0 +1,20 @@
+module_name: Emjwrite
+version: beta 1.0.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+description: "ТОЛЬКО ТЕЛЕГРАМ ПРЕМИУМ!\n\nПишет текст рукописным шрифтом через премиум емодзи"
+author: "built-in (@RimMirK)"
+sections:
+    _: 
+        description:
+        commands:
+            - names: [et]
+              arguments:
+                  - {text: текст/ответ/цитата, req: Yes}
+              description: написать текст рукописным шрифтом через премиум емодзи
+
+              
+requirements: ~

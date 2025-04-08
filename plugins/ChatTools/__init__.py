@@ -2,33 +2,20 @@ import asyncio
 from utils import *
 
 
-
-helplist.add_module(
-    HModule(
-        __package__,
-        description="Инструменты для работы с чатами",
-        version="1.2.2",
-        author="built-in (@RimMirK)"
-    ).add_command(
-        Command(['chatid', 'cid'], [], "Показать ID чата")
-    ).add_command(
-        Command(['chat'], [], "Получить всю информацию о чате")
-    ).add_command(
-        Command(['uid', 'userid'], [Arg("ответ")], "Показать ID пользователя")
-    ).add_command(
-        Command(['online'], [], "Сделать себя всегда онлайн")
-    ).add_command(
-        Command(['offline'], [], "Отменить всегда онлайн")
-    ).add_command(
-        Command(['ping'], [], "Узнать пинг")
-    )
-)
-
-
-
 async def main(app: Client, mod: Module):
 
     cmd = mod.cmd
+
+    async def worker():
+        while True:
+            if await mod.db.get('online', False):
+                omsg = await app.send_message('me', '.')
+                await omsg.delete()
+            await asyncio.sleep(10)
+
+    @mod.on_ready
+    async def _onr(_):
+        mod.add_task(worker())
 
     @cmd(['chatid', 'cid'])
     async def _cid(_, msg):
@@ -64,14 +51,10 @@ async def main(app: Client, mod: Module):
         await msg.edit(
             "<emoji id=5427009714745517609>✅</emoji> "
             "Теперь ты всегда в сети!\n"
-            "Для отмены пиши " + code(PREFIX + 'offline')
+            "Для отмены пиши " + code(Config.PREFIX + 'offline')
         )
         await mod.db.set('online', True)
-        while await mod.db.get('online', False):
-            omsg = await app.send_message('me', '.')
-            await omsg.delete()
 
-            await asyncio.sleep(10)
     
     @cmd(['offline'])
     async def _offline(app, msg):

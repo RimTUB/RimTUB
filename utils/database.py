@@ -123,7 +123,7 @@ class ModuleDB:
             return default
         return json.loads(c[0][0])
 
-    async def getall(self, default: dict[str, Any] = None) -> dict[str, Any] | None:
+    async def getall(self, default: Any = None) -> dict[str, Any] | None:
         """
         Получает все значения переменных для указанного модуля.
 

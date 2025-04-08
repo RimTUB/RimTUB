@@ -3,16 +3,6 @@ from utils import *
 from .scheme import emojis
 
 
-helplist.add_module(
-    HModule(
-        __package__,
-        version='beta 1.0.1',
-        description="ТОЛЬКО ТЕЛЕГРАМ ПРЕМИУМ!\n\nПишет текст рукописным шрифтом через премиум емодзи",
-        author='built-in (@RimMirK)'
-    ).add_command(
-        Command('et', [Arg('текст/ответ/цитата')], 'написать текст рукописным шрифтом через премиум емодзи')
-    )
-)
 
 
 async def main(app: Client, mod: Module):
@@ -27,7 +17,7 @@ async def main(app: Client, mod: Module):
 
         r = msg.reply_to_message
 
-        t = (text or msg.quote_text or getattr(r, 'text')).lower() 
+        t = (text or getattr(msg.quote, 'text', None) or getattr(r, 'text')).lower() 
         tr = t.maketrans(emojis)
         t = t.translate(tr)
 

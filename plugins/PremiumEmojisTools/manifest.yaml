@@ -1,0 +1,36 @@
+module_name: PremiumEmojisTools
+version: 1.0.0
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+description: Инструменты для работы с премиум емодзи
+author: built-in (@RimMirK)
+sections:
+    _:
+        commands:
+            - names: [set_gef_api_data]
+              description: Установить апи данные (https://html5animationtogif.com/apikey_detail)
+              arguments:
+                - {text: 'client_id', req: Yes}
+                - {text: 'api_key', req: Yes}
+            
+            - names: [gef]
+              description: Переобразовать премиум емодзи в файл
+            
+              
+
+requirements:
+    beautifulsoup4:
+        check: import bs4; assert bs4.__version__ == "4.13.3"
+        install: beautifulsoup4==4.13.3
+    lxml:
+        check: import lxml; assert lxml.__version__ == "5.3.1"
+        install: lxml=5.3.1
+    imageio:
+        check: import imageio; assert imageio.__version__ == "2.25.0"
+        install: imageio==2.25.0
+    lottie:
+        check: import lottie; assert lottie.__version__ == "0.7.1"
+        install: lottie==0.7.1

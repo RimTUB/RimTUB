@@ -1,0 +1,16 @@
+
+module_name: Terminal
+version: 1.1.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: Работа с терминалом
+author: "@vorsus"
+sections:
+    _:
+        commands:
+            - names: [t]
+              arguments:
+                  - {text: команда, req: yes}
+              description: выполнить команду

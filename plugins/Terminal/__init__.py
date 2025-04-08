@@ -3,16 +3,7 @@ from pyrogram import types
 from utils import *
 
 
-helplist.add_module(
-    HModule(
-        __package__,
-        version='1.1.1',
-        author='@vorsus',
-        description="Terminal",
-    ).add_command(
-        Command('t', [Arg("команда")], "выполнить команду")
-    )
-)
+
 
 async def execute_command(command):
     if command.lower() == "clear":

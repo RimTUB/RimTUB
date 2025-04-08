@@ -1,0 +1,27 @@
+module_name: X0
+version: 1.1.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+description: Загрузчик файлов на x0
+author: 'built-in (@vorsus)'
+sections:
+    _:
+        commands:
+            - names: [x0]
+              arguments:
+                  - {text: ответ на файл, req: Yes}
+              description: Загрузить на x0
+            - names: [x0inf]
+              arguments:
+              description: Узнать о x0
+
+
+requirements:
+    aiohttp:
+        check: import aiohttp; assert aiohttp.__version__ == "3.11.16"
+        install: aiohttp==3.11.16
+
+

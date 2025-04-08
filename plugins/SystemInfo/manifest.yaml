@@ -1,0 +1,21 @@
+module_name: SystemInfo
+version: 1.1.0
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: Показывает информацию о системе
+author: "built-in (@vorsus)"
+sections:
+    _:
+        description: Команды для получения информации о системе
+        commands:
+            - names: [sinfo]
+              arguments: []
+              description: Информация про систему
+
+requirements:
+    psutil:
+        check: import psutil; assert psutil.__version__ == "7.0.0"
+        install: psutil==7.0.0
+

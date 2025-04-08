@@ -2,20 +2,7 @@ from pyrogram import types
 from utils import *
 
 
-helplist.add_module(
-    HModule(
-        __package__,
-        version='1.1.3',
-        author='built-in (@RimMirK)',
-        description="Калькулятор",
-    ).add_command(
-        Command(
-            ['calc'],
-            [Arg("Выражение (пример)")],
-            "Посчитать"
-        )
-    )
-)
+
 
 async def main(app: Client, mod: Module):
 
@@ -48,4 +35,4 @@ async def main(app: Client, mod: Module):
             except: pe = e
             await msg.edit(f"<emoji id=5472164874886846699>✨</emoji> {equations} = {code(pe)}")
         except Exception as ex:
-            await msg.edit(f"<emoji id=5465665476971471368>❌</emoji> Error!\n\nДля исправления: {code(f'{PREFIX}{msg.command[0]} {equations}')}")
+            await msg.edit(f"<emoji id=5465665476971471368>❌</emoji> Error!\n\nДля исправления: {code(f'{Config.PREFIX}{msg.command[0]} {equations}')}")

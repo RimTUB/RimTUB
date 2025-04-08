@@ -1,0 +1,27 @@
+module_name: PythonRunner
+version: 1.2.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: Запускает код на Python
+author: "built-in (@RimMirK на основе модуля от @KurimuzonAkuma)"
+sections:
+    _: 
+        description: 
+        commands:
+            - names: [py]
+              arguments:
+                  - {text: Код, req: Yes}
+              description: Запустить код
+            - names: [rpy]
+              arguments:
+                  - {text: Ответ на сообщение/цитата, req: Yes}
+              description: Запускает код из отвеченного сообщения
+            - names: [eval]
+              arguments:
+                  - {text: Выражение, req: Yes}
+              description: Запускает eval()
+
+              
+requirements: ~

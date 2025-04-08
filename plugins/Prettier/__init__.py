@@ -1,25 +1,10 @@
 from utils import *
+from pytimeparse2 import parse as timeparse
 
-__libs__ = 'pytimeparse2',
 
-helplist.add_module(
-    HModule(
-        __package__,
-        author='@RimMirK',
-        version='1.0.02',
-        description="Делает из нечитаемого читаемое"
-    ).add_command(
-        Command(['pnum'], [Arg('число')], 'Вывести красиво число')
-    ).add_command(
-        Command(['ps2s', 'psec_to_str'], [Arg('секунды')], 'секунды в читаемое время')
-    ).add_command(
-        Command(['pt2s', 'ptext_to_str'], [Arg('время')], 'время в секунды')
-    )
-)
 
 async def main(app: Client, mod: Module):
     
-    from pytimeparse2 import parse as timeparse
 
     cmd = mod.cmd
 

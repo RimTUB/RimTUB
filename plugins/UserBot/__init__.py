@@ -3,69 +3,122 @@ import sys, time
 from pyrogram import __version__
 from pyrogram.types import Message as M
 
-from telebot.types import (
-    CallbackQuery as C, 
-    InlineQueryResultArticle as RArticle, InputTextMessageContent as TMC,
-    InlineKeyboardMarkup as IM, InlineKeyboardButton as IB
-)
-
 from utils import *
-from main import version
-from config import PREFIX, SHOW_HEADER_IN_HELP, DISABLE_STARTUP_MESSAGE
 
 
-def build_module_help_text(mod, header=True):
+
+def build_module_help_text(mod, section_name='_', header=True):
     help_text = (
-        ((HEADER + '\n\n' if SHOW_HEADER_IN_HELP else '') if header else '') +
-        f"Модуль {b(mod.name)}\n\n" +
-        (f"Версия: {b(mod.version)}\n" if mod.version else '') +
-        (f"Автор: {b(mod.author, False)}\n" if mod.author else '') +
-        (f"Описание: {b(mod.description, False)}\n" if mod.description else '') +
-        ("\n\n" if any((mod.version, mod.author, mod.description)) else '') +
-        b(f"Команды ({mod.get_commands_count()}):") + "\n"
+        ((HEADER + '\n\n' if Config.SHOW_HEADER_IN_HELP else '') if header else '') +
+        f"Модуль {b(mod.name)}\n\n" + "<blockquote>" +
+        ((b(f"Версия: ") + str(mod.version) + "\n") if mod.version else '') +
+        ((b(f"Автор: ") + str(mod.author) + "\n") if mod.author else '') +
+        ((b(f"Описание:\n") + str(mod.description)) if mod.description else '') +
+        "</blockquote>" +
+        ("\n\n\n" if any((mod.version, mod.author, mod.description)) else '')
     )
-    for c in mod.get_commands():
-        help_text += (
-            "  " + b(c.description) + "\n" +
-            "  " + ("|".join((code(PREFIX+command) for command in c.commands))) + "  " + 
-            (" ".join(list(map(escape, c.args)))) + '\n\n'
-        )
 
-    help_text += b(f"\nВозможности ({mod.get_features_count()})")
-    help_text += ":\n" if mod.get_features_count() > 0 else "\n"
-    for f in mod.get_features():
-        help_text += "  " + b(f.name) + ":\n"
-        help_text += "    " + "\n    ".join(map(escape, f.description.split('\n')))
-        help_text += "\n\n"
+    section = mod.get_sections().get(section_name)
+    if section_name != '_':
+        help_text += f"Секция: {b(section_name)}" + "\n"
+        help_text += (section.description or '') + '\n\n\n'
 
-    help_text += f"\n{b('Легенда: ')}\n   {code('< >')} – обязательный аргумент\n   {code('[ ]')} – необязательный аргумент.\n   {code(' / ')} – или"
+    help_text += b(f"Команды ({section.get_commands_count()}):") + "\n"
+    help_text += "<blockquote>"
+    if section.get_commands_count() > 0:
+        help_text += '\n'
+        for c in section.get_commands():
+            help_text += (
+                "" + b(c.description) + "\n" +
+                "" + ("|".join((code(Config.PREFIX + command) for command in c.commands))) + " " +
+                (" ".join(list(map(escape, c.args)))) + '\n\n'
+            )
+    else:
+        help_text += "Нет команд в этой секции.\n"
+    
+    help_text += "</blockquote>"
+
+
+    help_text += '\n'
+
+    
+
+    help_text += b(f"Возможности ({section.get_features_count()}):") + "\n"
+    help_text += "<blockquote>"
+    if section.get_features_count() > 0:
+        help_text += '\n'
+        for f in section.get_features():
+            help_text += "" + b(f.name) + ":\n"
+            help_text += "" + "\n".join(map(escape, f.description.split('\n')))
+            help_text += "\n\n"
+    else:
+        help_text += "Нет возможностей в этой секции.\n"
+
+    
+    help_text += "</blockquote>\n"
+
+    
+
+    other_sections = [sec for sec_name, sec in mod.get_sections().items() if sec_name != section_name]
+    help_text += b(f"Другие секции ({len(other_sections)}):") + "\n"
+    help_text += "<blockquote>"
+    if other_sections:
+        help_text += '\n'
+        for sec in other_sections:
+            
+            commands_count = sec.get_commands_count()
+            features_count = sec.get_features_count()
+
+            if sec.name != '_':
+                section_text = b(f"{sec.name} ")
+            else:
+                section_text = b(f"Основная секция ")
+
+            if commands_count > 0:
+                section_text += f" ({commands_count} {plural(commands_count, ('команда', 'команды', 'команд'))}"
+            
+            if features_count > 0:
+                if commands_count > 0:
+                    section_text += ' и '
+                else:
+                    section_text += '('
+                section_text += f"{features_count} {plural(features_count, ('возможность', 'возмоожности', 'возможностей'))})"
+            else:
+                if commands_count > 0:
+                    section_text += ')'
+            
+            if sec.name != '_':
+                section_text += f"\n{code(Config.PREFIX + 'h ' + mod.name + ':' + sec.name)} чтобы открыть"
+                help_text += section_text + "\n\n"
+            else:
+                section_text += f"\n{code(Config.PREFIX + 'h ' + mod.name)} чтобы открыть"
+                help_text += section_text + "\n\n"
+    else:
+        help_text += "Нет других секций в этом модуле.\n"
+
+        
+    help_text += "</blockquote>"
+
+    help_text += f"\n\n{b('Легенда: ')}\n   {code('< >')} – обязательный аргумент\n   {code('[ ]')} – необязательный аргумент.\n   {code(' / ')} – или"
 
     return help_text
 
-async def click(app: Client, c: C):
-    with open('logs/last_run.log', encoding='utf-8') as f:
-        lnk = await paste(f.read(), 'log')
-    await app.bot.edit_message_text(f"Лог запуска: {lnk}", inline_message_id=c.inline_message_id)
 
-async def restarted(app: Client, i, delta):
-    await app.bot.answer_inline_query(i.id, [
-        RArticle(0, '.', TMC(f'Перезапущено за <b>{delta:.2f}s.</b>', parse_mode='html'), reply_markup=IM(   
-            ).add(IB("посмотреть лог запуска", callback_data=format_callback(app, click))))
-    ])
-
-async def started(app: Client, i):
-    await app.bot.answer_inline_query(i.id, [
-        RArticle(0, '.', TMC(f'<b>RimTUB {version} Запущен!</b>\nПрефикс: «<code>{PREFIX}</code>»', parse_mode='html'), reply_markup=IM(   
-            ).add(IB("посмотреть лог запуска", callback_data=format_callback(app, click))))
-    ])
 
 async def main(app: Client, mod: Module):
 
-    cmd = app.cmd(G:=app.get_group(__package__))
+    cmd = mod.cmd
 
-    @app.on_ready(G)
+    @mod.on_ready
     async def _onr(app):
-        print('asdk')
+
+        with open('logs/last_run.log', encoding='utf-8') as f:
+            link = await paste(f.read(), 'log')
+
+        buttons = Buttons([
+            [Button('Посмотреть лог запуска', callback_data='show_log', extra_data={'log': link})]
+        ])
+
         if len(sys.argv) >= 2:
             _, type_, *values = sys.argv
             if type_ == 'restart':
@@ -74,20 +127,68 @@ async def main(app: Client, mod: Module):
                     return  
                 now = time.perf_counter()
                 delta = now - float(time_)
-                r = await app.get_inline_bot_results(app.bot_username, format_callback(app, restarted, delta=delta))
-                await app.send_inline_bot_result(int(chat_id), r.query_id, "0")
+                await mod.send_buttons(int(chat_id), f"Перезапущено за <b>{delta:.2f}s.</b>", buttons)
                 await app.delete_messages(int(chat_id), int(msg_id))
         else:
-            if not DISABLE_STARTUP_MESSAGE:
-                r = await app.get_inline_bot_results(app.bot_username, format_callback(app, started))
-                await app.send_inline_bot_result('me', r.query_id, "0")
+            if not Config.DISABLE_STARTUP_MESSAGE:
+                await mod.send_buttons('me', f'<b>RimTUB {Config.VERSION} Запущен!</b>\nПрефикс: «<code>{Config.PREFIX}</code>»', buttons)
             
+            
+
+    @mod.callback('show_log')
+    async def _show_log(c: C):
+        if c.from_user.id != app.me.id:
+            return c.answer('Это не твоя кнопка!', True)
+        await c.edit_message_text(f"Лог запуска: {c.extra_data.get('log')}")
+        
+
+    @cmd(['help', 'h'])
+    async def _help(_, msg: M):
+        mod_name = get_args(msg.text or msg.caption).lower()
+
+        if mod_name:
+            modn = mod_name.split(':')[0]
+            mod = helplist.get_module(modn, lower=True)
+            if not mod:
+                return await msg.edit(f"Модуль {mod_name} не найден!\nПосмотреть список модулей: {code(Config.PREFIX+'help')}")
+            
+            section_name = mod_name.split(':')[1] if ':' in mod_name else '_'
+
+            return await msg.edit(build_module_help_text(mod, section_name), disable_web_page_preview=True)
+
+        help_text = (HEADER + "\n" if Config.SHOW_HEADER_IN_HELP else '') + f"\nМодули (плагины): {b(helplist.get_modules_count())}\n"
+        commands_count, features_count = 0, 0
+        help_text += '<blockquote>'
+        for module in helplist.get_modules():
+            _commands_count = module.get_commands_count()
+            _features_count = module.get_features_count()
+            commands_count += _commands_count
+            features_count += _features_count
+
+            help_text += (
+                (
+                    f"{code(f'{Config.PREFIX}h {module.name}')}   "
+                    if Config.SHOW_MODULES_WITH_COMMAND_IN_HELP
+                    else f"  {code(module.name)}   "
+                )+
+                (f"({b(_commands_count)} {plural(_commands_count, ('команда', 'команды', 'команд'))}" if _commands_count > 0 else '(') +
+                (' и ' if _commands_count > 0 and _features_count > 0 else '') +
+                (f"{b(_features_count)} {plural(_features_count, ('возможность', 'возмоожности', 'возможностей'))})\n" if _features_count > 0 else ')\n')
+            )
+        help_text += '</blockquote>\n'
+        help_text += (
+            f"всего {b(commands_count)} {plural(commands_count, ('команда', 'команды', 'команд'))} и \n"
+            f"{b(features_count)} {plural(features_count, ('возможность', 'возмоожности', 'возможностей'))}\n"
+            f'\nДля получения списка команд модуля\nиспользуйте {code(Config.PREFIX+"help")} [название модуля]'
+        )
+
+        await msg.edit(help_text)
 
     @cmd(['me', 'start', 'menu'])
     async def _me(_, msg: M):
         me_text = (
             HEADER + '\n'
-            f"Версия: {b( version )}\n"
+            f"Версия: {b( Config.VERSION )}\n"
             f"Разработчик: {b(a('@RimMirK', 'https://t.me/RimMirK'), False)}\n"
             f"Канал: {b(a('@RimTUB', 'https://t.me/RimTUB'), False)}\n"
             f"Время работы: {b( sec_to_str(time.perf_counter() - bot_uptime))}\n"
@@ -103,69 +204,9 @@ async def main(app: Client, mod: Module):
         await msg.edit(me_text)
 
 
-
-    @cmd(['help', 'h'])
-    async def _help(_, msg: M):
-        if mod_name := get_args(msg.text or msg.caption).lower():
-            mod = helplist.get_module(mod_name, lower=True)
-            if not mod:
-                return await msg.edit(f"Модуль {mod_name} не найден!\nПосмотреть список модулей: "+code(PREFIX+'help'))
-            
-
-            return await msg.edit(build_module_help_text(mod))
-
-        help_text = (
-            (HEADER + "\n" if SHOW_HEADER_IN_HELP else '') + 
-            "\n"
-            f"Модули (плагины): {b(helplist.get_modules_count())}\n"
-        )
-        commands_count = 0
-        features_count = 0
-        for module in helplist.get_modules():
-            _commands_count = module.get_commands_count()
-            _features_count = module.get_features_count()
-            commands_count += _commands_count
-            features_count += _features_count
-            help_text += (
-                f"    {code(module.name)}   " + (
-                    f"({b(_commands_count)} {plural(_commands_count, ('команда', 'команды', 'команд'))}"
-                    if _commands_count > 0 else ''
-                ) + (' и ' if _commands_count > 0 and _features_count > 0 else '') + (
-                    f"{ b(_features_count)} {plural(_features_count, ('возможность', 'возмоожности', 'возможностей'))})\n"
-                    if _features_count > 0 else ')\n'
-                )
-            )
-
-
-        help_text += (
-            f"(всего {b(commands_count)} {plural(commands_count, ('команда', 'команды', 'команд'))} и \n"
-            f"{b(features_count)} {plural(features_count, ('возможность', 'возмоожности', 'возможностей'))})\n"
-            f'\nДля получения списка команд модуля\nиспользуйте {code(PREFIX+"help")} [\xa0название\xa0модуля\xa0]'
-        )
-
-        await msg.edit(help_text)
-
-
-
-
     @cmd(['restart', 'reload'])
     async def _resatrt(app, msg):
         await msg.edit("Перезагружаюсь...")
         restart(app.app_hash, msg.chat.id, msg.id)
 
        
-
-
-
-mod = HModule(
-    __package__,
-    description="Главный модуль RimTUB. Помощь и управление тут",
-    author="built-in (@RimMirK)",
-    version=version
-)
-
-mod.add_command(Command(['me', 'start', 'menu'], [], "Открыть стартовое меню"))
-mod.add_command(Command(['help', 'h'], [Arg('название модуля', False)], "Получить помощь"))
-mod.add_command(Command(['restart', 'reload'], [], "Перезапустить RimTUB"))
-
-helplist.add_module(mod)

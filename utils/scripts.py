@@ -1,12 +1,21 @@
-from difflib import SequenceMatcher, get_close_matches
+from difflib import get_close_matches
+import importlib
+import logging
+from pathlib import Path
 from typing import List, TextIO, Tuple, Dict, Callable, Any
 import os, sys, gc, time, re
-
-# from utils.modify_pyrogram_client import ModifyPyrogramClient
+import yaml
+import random
+import string
+from .config import Config
+import subprocess
+import pickle
+import json
+import os
 
 
 __all__ = [
-    'get_script_directory',
+    'get_root',
     'get_args',
     'parse_args',
     'pnum',
@@ -21,20 +30,24 @@ __all__ = [
     'get_tree',
     'find_file',
     'find_directory',
+    'read_yaml',
+    'singleton',
+    'save_pickle',
+    'load_pickle',
+    'generate_random_identifier'
 ]
 
 
-def get_script_directory() -> str:
+def get_root(as_path=False) -> str|Path:
     """
-    Возвращает путь к директории, в которой находится текущий исполняемый скрипт.
+    Возвращает путь к директории, в которой находится RimTUB.
 
-    :return str: путь к директории скрипта.
+    :return str: путь к корню RimTUB.
     """
     path = os.path.realpath(sys.argv[0])
-    if os.path.isdir(path):
-        return path
-    else:
-        return os.path.dirname(path)
+    if not os.path.isdir(path):
+        path = os.path.dirname(path)
+    return Path(path) if as_path else path
 
 
 def get_args(text: str, default: Any = '') -> str | Any:
@@ -115,12 +128,34 @@ def pnum(num: int | float) -> int | float:
     """
     return int(num) if int(num) == float(num) else float(num)
 
+def fnum(num: int, threshold: int = 10000) -> str:
+    """
+    Форматирует число с разделением тысяч, если оно больше или равно указанному порогу
+    Возвращает число как строку без запятой, если оно меньше порога
 
-def sec_to_str(seconds: str, round: bool = True) -> str:
+    :param int num: число для преобразования
+    :param int threshold: пороговое значение для разделения тысяч
+    :return str: отформатированное число в виде строки
+
+    ## Пример
+    .. code-block:: python
+        print(fnum(1000))     # '1000'
+        print(fnum(10000))    # '10,000'
+        print(fnum(1000000))  # '1,000,000'
+        print(fnum(666))      # '666'
+        print(fnum(1200, threshold=1000))  # '1,200'
+    """
+    if num >= threshold:
+        return f"{num:,}"
+    else:
+        return str(num)
+
+
+def sec_to_str(seconds: int, round: bool = True) -> str:
     """
     Преобразует количество секунд в строковое представление формата "д.ч.м.с."
 
-    :param str seconds: количество секунд для преобразования.
+    :param int seconds: количество секунд для преобразования.
     :param bool round: округлять ли число секунд до целого (по умолчанию True).
     :return str: строка, представляющая время.
 
@@ -161,9 +196,10 @@ def plural(count: int, words: List[str]) -> str:
 
     ## Пример
     .. code-block:: python
-        plural(1, ['модуль', 'модуля', 'модулей']) # модуль
-        plural(3, ['модуль', 'модуля', 'модулей']) # модуля
-        plural(15,['модуль', 'модуля', 'модулей']) # модулей
+        module = ['модуль', 'модуля', 'модулей']
+        plural(1,  module) # модуль
+        plural(3,  module) # модуля
+        plural(15, module) # модулей
     """
     if count % 10 == 1 and count % 100 != 11:
         return words[0]
@@ -175,7 +211,7 @@ def plural(count: int, words: List[str]) -> str:
 
 def restart(app_id: int, chat_id: int = None, msg_id: int = None) -> None:
     """
-    Перезапускает текущий процесс с передачей аргументов.
+    Перезапускает RimTUB
 
     :param int app_id: ID клиента 
     :param int chat_id: (опционально) идентификатор чата для изменения сообщения.
@@ -212,7 +248,7 @@ def get_numbers_from_string(string: str) -> List[float]:
     Извлекает все числа из строки.
 
     :param str string: строка для поиска чисел.
-    :return List[float]: список чисел в строковом представлении.
+    :return List[float]: список чисел
     """
     nums = re.findall(r'\d*\.\d+|\d+', string)
     return [float(i) for i in nums]
@@ -278,6 +314,7 @@ def try_(
     :param Any default: значение по умолчанию, возвращаемое при исключении (по умолчанию None).
     :return Any: результат выполнения функций.
     """
+    r = default
     try:
         r = func_to_try()
     except:
@@ -404,4 +441,135 @@ def find_directory(
     return default
 
 
+def install_requirements(requirements: dict):
+    logger = logging.getLogger('RimTUB')
+    try:
+        for req in requirements.values():
+            logger.debug(f'Checking requirement...\n{req["check"]}')
+            try: exec(req['check'])
+            except (ImportError, AssertionError):
+                logger.debug('Requirement not found')
+                logger.debug(f"installing {req['install']}...")
+                try:
+                    subprocess.check_call([sys.executable, "-m", "pip", "install", req['install'], *req.get('params', [])])
+                except:
+                    logger.error(f"Can\'t install {req['install']}(", exc_info=True)
+                logger.debug(f"done!")
+            except:
+                logger.error("Can\'t install requirements, invalid check code")
+            else:
+                logger.debug('Requirement exist!')
+    except KeyError as key:
+        logger.error(f'Can\'t install requirements, key `{key}` not found in requirement')
+    except TypeError:
+        logger.error("Can\'t install requirements, invalid type", exc_info=True)
 
+
+def read_yaml(file_path: str):
+    """
+    Чтение YAML файла
+
+    :param str file_path: Путь к YAML файлу
+
+    :return dict: Данные в виде словаря
+
+    error `FileNotFoundError`: когда файл не найден
+    error `yaml.scanner.ScannerError`: при ошибке парсинга
+    """
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
+    
+
+from typing import TypeVar, Type, Dict, Any, Callable, cast
+
+T = TypeVar('T')
+
+def singleton(cls):
+    """
+    Декоратор для реализации паттерна Singleton.
+
+    :param type cls: Класс, для которого нужно создать единственный экземпляр.
+    :return: Класс-обертка для получения единственного экземпляра класса.
+    """
+    instances: Dict[Type[T], T] = {}
+
+    original_new = cls.__new__
+
+    def singleton_new(cls_: Type[T], *args: Any, **kwargs: Any) -> T:
+        if cls_ not in instances:
+            instances[cls_] = original_new(cls_, *args, **kwargs)
+        return instances[cls_]
+
+    cls.__new__ = singleton_new  # type: ignore
+
+    return cls
+
+
+
+
+# Путь к JSON с мета-данными
+META_FILE = Path(get_root(), 'storage', 'files_meta.json')
+
+def load_meta():
+    """Загрузка метаданных из файла"""
+    if os.path.exists(META_FILE):
+        with open(META_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {}
+
+
+def save_meta(meta):
+    """Сохранение метаданных в файл"""
+    with open(META_FILE, 'w', encoding='utf-8') as f:
+        json.dump(meta, f, indent=4)
+
+Config()
+
+def save_pickle(path, data, ttl=Config.DEFAULT_PICKLE_STORAGE_FILES_TTL):
+    """Сохраняет данные в pickle storage """
+    if os.path.exists(path):
+        raise FileExistsError(f'File {path} already exist (Pickle Storage)')
+    
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
+
+    meta = load_meta()
+    expire_at = int(time.time()) + ttl
+    meta[str(path)] = expire_at
+    save_meta(meta)
+    
+    return Path(path).absolute()
+
+
+def load_pickle(path):
+    """Загружает данные из pickle storage"""
+    if not os.path.exists(path):
+        err = FileNotFoundError(f"Файл {path} не найден (Pickle Storage)")
+        err.path = path
+        raise err
+    return pickle.load(open(path, 'rb'))
+
+
+def cleanup_expired_storage_files():
+    """Удаляет устаревшие storage pickle файлы по TTL"""
+    meta = load_meta()
+    now = int(time.time())
+    updated_meta = {}
+
+    for path, expire_at in meta.items():
+        if now >= expire_at:
+            if os.path.exists(path):
+                os.remove(path)
+        else:
+            updated_meta[path] = expire_at
+
+    save_meta(updated_meta)
+
+
+def generate_random_identifier(length=10):
+    """Генерирует уникальную комбинацию чисел указанной длинны"""
+    return ''.join(
+        random.choice(string.ascii_letters + string.digits)
+        for __ in range(length)
+    )
+    

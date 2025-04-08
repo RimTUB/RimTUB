@@ -1,0 +1,35 @@
+# название модуля
+module_name: UserBot
+
+# версия модуля
+version: 2.2-1.0.0
+native_RimTUB_version: 2.1.1  # оригинальная версия RimTUB на которую писался модуль
+online_check_RimTUB_versions: Off  # чекать ли онлайн доступные версии ЮБ (в разработке)
+
+description: |  # описание модуля
+    Главный модуль RimTUB. Помощь и управление тут
+
+# разраб
+author: built-in (@RimMirK)
+
+# Хелплист
+sections:
+    _:  # основная секция
+        description: ""  # Описание секции (отсутствует)
+        commands:  # команды
+            - names: [me, start, menu]  # список алиасов
+              arguments: []  # аргументы команды
+              description: Открыть стартовое меню  # описание команды
+            - names: [help, h]
+              arguments:
+                  - {text: название модуля, req: No}
+              description: Получить помощь
+            - names: [restart, reload]
+              arguments: []
+              description: Перезапустить RimTUB
+
+    next: 
+        description: Halo
+        features:
+            - title: Хз
+              description: хЗ

@@ -1,0 +1,30 @@
+module_name: AI
+version: 1.1.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+online_check_RimTUB_versions: Off
+
+description: |
+    AI
+
+author: "built-in (@vorsus)"
+
+sections:
+    _: 
+        description: 
+        commands:
+            - names: [ai]
+              arguments:
+                  - {text: "запрос", req: Yes}
+              description: спросить gpt4
+            - names: ["ai help"]
+              arguments: ~
+              description: гайд по модулю
+        features: ~
+
+requirements:
+    aiohttp:
+        check: import aiohttp; assert aiohttp.__version__ == "3.11.16"
+        install: aiohttp==3.11.16 

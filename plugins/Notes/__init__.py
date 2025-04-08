@@ -1,34 +1,11 @@
 from pyrogram.types import Message
 from utils import *
 
-helplist.add_module(
-    Module(
-        __package__,
-        description="заметки 2.0",
-        author="built-in (@RimMirK)",
-        version='2.0.1'
-    ).add_command(
-        Command(
-            ['addnote', 'setnote'], [Arg("название"), Arg("ответ")], 'создать заметку'
-        )
-    ).add_command(
-        Command(
-            'note', [Arg("название")], 'вывести заметку'
-        )
-    ).add_command(
-        Command(
-            ['notes', 'mynotes'], [], 'список заметок'
-        )
-    ).add_command(
-        Command(
-            ['delnote'], [Arg("название")], 'удалить заметку'
-        )
-    )
-)
 
-async def main(app):
 
-    cmd = app.cmd(app.get_group(__package__))
+async def main(app, mod: Module):
+
+    cmd = mod.cmd
 
     @cmd(["addnote", 'setnote'])
     async def _naddnote(app: Client, msg: Message):
@@ -41,8 +18,8 @@ async def main(app):
             return await msg.edit(b("Напиши название заметки!"))
         saved_msg = await r.copy('me')
         warning_msg = await saved_msg.reply(b("Не удаляй это сообщение! Оно нужно для работы заметок!"), quote=True)
-        await app.db.set('nnotes', name, saved_msg.id)
-        await app.db.set('nnotes_meta', name, warning_msg.id)
+        await mod.db.set(name, saved_msg.id)
+        await mod.db.set(f"{name}_warning", warning_msg.id)
         await msg.edit(b("Заметка ") + code(name) + b(" сохранена!"))
 
     @cmd(['note', 'cnote'])
@@ -52,7 +29,7 @@ async def main(app):
         except:
             return await msg.edit(b("Напиши название заметки!"))
         
-        note_msg_id = await app.db.get('nnotes', name)
+        note_msg_id = await mod.db.get(name)
         if note_msg_id is None:
             return await msg.edit(b("Заметка ") + code(name) + b(" не найдена!"))
         await app.copy_message(
@@ -64,9 +41,14 @@ async def main(app):
 
     @cmd(["notes", "mynotes"])
     async def _mynotes(app: Client, msg):
-        d = await app.db.getall('nnotes')
+        d = await mod.db.getall()
 
         if d:
+            
+            for e in d.copy():
+                if e.endswith('_warning'):
+                    del d[e]
+
             m = b('Твои заметки:\n')
             for name, note_msg_id in d.items():
                 note_msg = await app.get_messages('me', note_msg_id)
@@ -112,14 +94,14 @@ async def main(app):
         except:
             return await msg.edit(b("Напиши название заметки!"))
 
-        note_msg_id = await app.db.get('nnotes', name)
+        note_msg_id = await mod.db.get(name)
         if note_msg_id is None:
             return await msg.edit(b("Заметка не найдена!"))
         
         await app.delete_messages('me', note_msg_id)
-        await app.delete_messages('me', await app.db.get("nnotes_meta", name))
+        await app.delete_messages('me', await mod.db.get(f"{name}_warning"))
         
-        await app.db.remove('nnotes', name)
-        await app.db.remove('nnotes_meta', name)
+        await mod.db.remove(name)
+        await mod.db.remove(f"{name}_warning")
 
         await msg.edit(b("Заметка ") + code(name) + b(" удалена!"))

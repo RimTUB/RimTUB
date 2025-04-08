@@ -1,7 +1,6 @@
 from traceback import print_exc
 from utils import *
-
-__libs__ = [['googletrans', 'googletrans==3.1.0a0']]
+from googletrans import Translator, LANGUAGES
 
 
 def extract_text(msg, offset):
@@ -13,8 +12,8 @@ def extract_text(msg, offset):
         text = " ".join(text) if text else None
     if text:
         return text
-    if msg.quote_text:
-        return msg.quote_text
+    if getattr(msg.quote, 'text', None):
+        return getattr(msg.quote, 'text', None)
     elif msg.reply_to_message and msg.reply_to_message.text:
         return msg.reply_to_message.text
     elif msg.reply_to_message and msg.reply_to_message.caption:
@@ -23,7 +22,6 @@ def extract_text(msg, offset):
 
 async def main(app: Client, mod: Module):
 
-    from googletrans import Translator, LANGUAGES
     
     translator = Translator()
 
@@ -74,18 +72,3 @@ async def main(app: Client, mod: Module):
     async def _trlangs(_, msg):
         await msg.edit(b("Доступные языки:\n")+LANGS) 
         
-
-helplist.add_module(
-    HModule(
-        __package__,
-        description="Google переводчик",
-        author="built-in (@RimMirK)",
-        version="1.1.4",
-    ).add_command(
-        Command(['tr', 'translate'], [Arg("целевой язык"), Arg("текст/ответ")], "Перевести текст")
-    ).add_command(
-        Command(['trf', 'translatefrom', 'trfrom'], [Arg("Язык оригинала"), Arg("целевой язык"), Arg("текст/ответ")], "Перевести текст")
-    ).add_command(
-        Command(['trlangs'], [], "Список языков и их код")
-    )
-)

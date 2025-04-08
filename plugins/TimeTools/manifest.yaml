@@ -1,0 +1,50 @@
+module_name: TimeTools
+version: 1.0.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: |
+    Работа со временем
+    
+    * - примеры указания времени: 25s, 1d, 1h30m, 7d4s
+    
+    Для корректной работы включи уведомления у личного бота!
+    
+author: "built-in (@RimMirK)"
+sections:
+    timers:
+        description: Команды для работы с таймерами
+        commands:
+            - names: [timer]
+              arguments:
+                  - {text: время*, req: true}
+                  - {text: Текст этикетки, req: false}
+              description: Завести таймер
+            - names: [timers]
+              arguments: []
+              description: Список таймеров
+            - names: [stoptimer]
+              arguments:
+                  - {text: ID Таймера, req: true}
+              description: Остановить таймер
+    time_lookup:
+        description: Команды для запроса времени
+        commands:
+            - names: [gettime]
+              arguments:
+                  - {text: Город, req: true}
+              description: Узнать время в городе
+
+
+requirements:
+    geopy:
+        check: import geopy; assert geopy.__version__ == "2.4.1"
+        install: geopy==2.4.1
+    pytimeparse:
+        check: import pytimeparse2; assert pytimeparse2.__version__ == "1.7.1"
+        install: pytimeparse==1.1.8
+    requests:
+        check: import requests; assert requests.__version__ == "2.28.1"
+        install: requests==2.28.1
+

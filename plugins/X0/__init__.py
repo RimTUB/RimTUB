@@ -1,20 +1,7 @@
 from pyrogram import types
 from utils import *
 
-__libs__ = ['aiohttp'] 
 
-helplist.add_module(
-    HModule(
-        __package__,
-        version='1.1.1',
-        author='@vorsus',
-        description="Загрузчик файлов на x0",
-    ).add_command(
-        Command('x0', [Arg("ответ на файл")], "Загрузить на x0")
-    ).add_command(
-        Command('x0inf', [], "Узнать о x0")
-    )
-)
 
 async def main(app: Client, mod: Module):
 

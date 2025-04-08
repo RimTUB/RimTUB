@@ -1,0 +1,26 @@
+module_name: QrTools
+version: 0.5.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+online_check_RimTUB_versions: Off
+description: Инструменты для работы с QR-кодами
+author: "built-in (@vorsus)"
+sections:
+    _:
+        description: Команды для работы с QR-кодами
+        commands:
+            - names: [makeqr]
+              arguments:
+                  - {text: "-file/-f", req: false}
+                  - {text: текст, req: true}
+              description: Создать QR-код
+
+requirements:
+    aiohttp:
+        check: import aiohttp; assert aiohttp.__version__ == "3.11.16"
+        install: aiohttp==3.11.16
+    Pillow:
+        check: from PIL import Image; assert Image.__version__ == "11.1.0"
+        install: Pillow==11.1.0
+
