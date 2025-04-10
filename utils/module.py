@@ -1,6 +1,8 @@
 from copy import deepcopy
 from functools import lru_cache
 import time
+
+from utils.misc import clients
 from ._logs import install_log
 from .database import ModuleDB, DictStorage
 from .scripts import generate_random_identifier, get_root, save_pickle, load_pickle, read_yaml
@@ -233,8 +235,11 @@ class Module(SingletonByAttribute):
                     
 
 
-    def callback(self, callback_data='', startswith='', group=None):
-
+    def callback(
+        self, callback_data='', startswith='', group=None,
+        allowed_ids: List[int] = None, message='Это не твоя кнопка!', show_alert=True
+    ):
+        
         def _flt(data):
             module_name, _, moddata = data.split(':', 2)
             if module_name != self.name:
@@ -247,6 +252,9 @@ class Module(SingletonByAttribute):
                 return True
             return False
 
+        if not allowed_ids:
+            allowed_ids = [client.me.id for client in clients]
+            
         def decorator(func):
 
             @self.client.bot.on_callback_query(
@@ -255,6 +263,10 @@ class Module(SingletonByAttribute):
             )
             async def __wrapper(c, *args, **kwargs):
                 try:
+                    if c.from_user.id not in allowed_ids:
+                        await c.answer(message, show_alert)
+                        return None
+                    
                     c = getattr(c, 'original_callback', c)
                     _, extra_data_id, moddata = c.data.split(':', 2)
                     mc = deepcopy(c)

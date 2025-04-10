@@ -67,18 +67,6 @@ class C(CallbackQuery):
     original_data: str
     original_callback: CallbackQuery
 
-def private_button(allowed_ids: List[int] = None, message='Это не твоя кнопка!', show_alert=True):
-    if not allowed_ids:
-        allowed_ids = [client.me.id for client in clients]
-    def decorator(func):
-        async def wrapper(c, *args, **kwargs):
-            if c.from_user.id not in allowed_ids:
-                await c.answer(message, show_alert)
-            else:
-                await func(c, *args, **kwargs)
-        return wrapper
-    return decorator
-
 
 def _load_bot_helper_handlers(bot):
 
