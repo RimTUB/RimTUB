@@ -1,14 +1,10 @@
-from typing import Any, List, Optional, Union, overload, Awaitable
-
-from pyrogram.raw.types import UpdateNewChannelMessage
+from typing import Any, List, Optional, Union
 
 
-from utils.misc import _objects, clients
-from pyrogram import Client, filters
-from pyrogram.types import InlineQuery, InlineQueryResult, InlineQueryResultArticle, InputTextMessageContent, CallbackQuery
+from utils.misc import _objects
+from pyrogram import filters
+from pyrogram.types import InlineQuery,  InlineQueryResultArticle, InputTextMessageContent, CallbackQuery
 from pyrogram.types import InlineKeyboardMarkup as Buttons, InlineKeyboardButton as Button
-from pyrogram import types
-
 
 
 __all__ = [
@@ -16,7 +12,6 @@ __all__ = [
     'Buttons',
     '_load_bot_helper_handlers',
     'C',
-    'private_button'
 ]
 
 
