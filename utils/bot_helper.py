@@ -3,7 +3,7 @@ from typing import Any, List, Optional, Union, overload, Awaitable
 from pyrogram.raw.types import UpdateNewChannelMessage
 
 
-from utils.misc import _objects
+from utils.misc import _objects, clients
 from pyrogram import Client, filters
 from pyrogram.types import InlineQuery, InlineQueryResult, InlineQueryResultArticle, InputTextMessageContent, CallbackQuery
 from pyrogram.types import InlineKeyboardMarkup as Buttons, InlineKeyboardButton as Button
@@ -15,7 +15,8 @@ __all__ = [
     'Button',
     'Buttons',
     '_load_bot_helper_handlers',
-    'C'
+    'C',
+    'private_button'
 ]
 
 
@@ -66,18 +67,27 @@ class C(CallbackQuery):
     original_data: str
     original_callback: CallbackQuery
 
+def private_button(allowed_ids: List[int] = None, message='Это не твоя кнопка!', show_alert=True):
+    if not allowed_ids:
+        allowed_ids = [client.me.id for client in clients]
+    def decorator(func):
+        async def wrapper(c, *args, **kwargs):
+            if c.from_user.id not in allowed_ids:
+                await c.answer(message, show_alert)
+            else:
+                await func(c, *args, **kwargs)
+        return wrapper
+    return decorator
 
 
 def _load_bot_helper_handlers(bot):
 
     @bot.on_inline_query(filters.create(lambda _, __, i: i.query.startswith('iqm:')))
     async def _all_inline(_, i: InlineQuery):
+        bot.logger.debug(f'got inline query. {i}')
         _, id = i.query.split(':')
         data = _objects.get(id)
         if data:
             await bot.answer_inline_query(i.id, [
-                InlineQueryResultArticle('1', InputTextMessageContent(data['text'], bot.parse_mode), id='0', reply_markup=data.get('buttons'))
+                InlineQueryResultArticle('1', InputTextMessageContent(data['text'], bot.parse_mode, **data.get('input_text_message_content_params', {})), id='0', reply_markup=data.get('buttons'))
             ])
-
-
-

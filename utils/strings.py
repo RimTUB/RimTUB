@@ -1,8 +1,8 @@
-from .html_tags import b, a
+from .html_tags import b, a, emoji
 
 __all__ = [
     'HEADER'
 ]
 
-HEADER = b(f')===<[ <emoji id=5404374588555542476>🌟</emoji> {a("RimTUB", "https://t.me/RimTUB")} <emoji id="5402186349962871416">🚀</emoji> ]>===(', False)
+HEADER = b(f')===<[ {emoji(5404374588555542476, "🌟")} {a("RimTUB", "https://t.me/RimTUB")} {emoji(5402186349962871416, "🚀")} ]>===(', False)
 """Шапка"""

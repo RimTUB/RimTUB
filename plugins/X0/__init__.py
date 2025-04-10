@@ -12,12 +12,12 @@ async def main(app: Client, mod: Module):
 
     @cmd(['x0'])
     async def x0(_, msg: types.Message):
-        await msg.edit("<b>Uploading...</b>")
+        await msg.edit(b("Uploading..."))
 
         reply = msg.reply_to_message
         if not reply:
             await msg.edit(
-                f'<emoji id="5447644880824181073">⚠️</emoji> Отправьте ответом на сообщение')
+                f'{emoji(5447644880824181073, "⚠️")} Отправьте ответом на сообщение')
             return
 
         media = reply.media
@@ -45,11 +45,13 @@ async def main(app: Client, mod: Module):
                         url = await resp.text()
                     else:
                         await msg.edit(
-                            f'<b><emoji id="5420323339723881652">⚠️</emoji>Error</b>\n<code>HTTP {resp.status}</code>')
+                            emoji(5420323339723881652, '⚠️') + b(' Error\n') + code(f'HTTP {resp.status}')
+                        )
                         return
         except aiohttp.ClientError as e:
             await msg.edit(
-                f'<b><emoji id="5420323339723881652">⚠️</emoji>Error</b>\n<code>{e}</code>')
+                emoji(5420323339723881652, '⚠️') + b(' Error\n') + code(e)
+            )
             return
         finally:
             if not media:
@@ -61,14 +63,14 @@ async def main(app: Client, mod: Module):
                     file.close()
                     import os
                     os.remove(file_path)
-        output = f'<a href="{url}">URL: </a><code>{url}</code>'
+        output = a(f'URL: ', url) + code(url)
         await msg.edit(output)
 
     @cmd(['x0inf'])
     async def x0inf(_, msg: types.Message):
-        output = """
-<b>Помощь по модулю x0</b>
-<pre>
+        output = f"""
+{b('Помощь по модулю x0')}
+""" + pre("""
 Максимально допустимый размер файла - 222 MiB.
 
 Файлы хранятся минимум 3, а максимум 100 дней.
@@ -76,6 +78,5 @@ async def main(app: Client, mod: Module):
 Срок хранения файла зависит от его размера. Большие файлы удаляются раньше 
 чем маленькие. Эта зависимость нелинейна и смещена в пользу маленьких 
 файлов.
-</pre>
-        """
+        """)
         await msg.edit(output)

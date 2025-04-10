@@ -1,7 +1,7 @@
 from hashlib import sha256
 from pathlib import Path
 from typing import Callable, Coroutine, Iterable, List
-import asyncio, gc, importlib, itertools, os, sys, pip
+import asyncio, gc, importlib, itertools, os, sys
 from types import FunctionType
 from logging import Logger
 
@@ -50,9 +50,6 @@ from utils.helplist import *
 from utils.scripts import get_root, install_requirements, read_yaml
 config.disable_startup_logs = True  # settings in this shit (pyromod) don't work
 from pyromod import Client
-
-from pyrogram.types import InlineKeyboardMarkup as Buttons, InlineKeyboardButton as Button
-
 
 from .misc import NCmd, helplist, clients
 from .exceptions import LoadError

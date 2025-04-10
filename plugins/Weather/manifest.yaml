@@ -3,6 +3,8 @@ version: 1.0.1
 native_RimTUB_version: 2.2
 available_RimTUB_versions:
     - 2.2
+    - 2.2.1
+    - dev-2.2.1
     - dev-2.2
 online_check_RimTUB_versions: Off
 description: Погода
@@ -17,10 +19,10 @@ sections:
 
 requirements:
     python_weather:
-        check: import python_weather; assert python_weather.__version__ == "2.0.7"
-        install: python-weather==2.0.7
+        check: import python_weather; assert python_weather.__version__ == "1.0.3"
+        install: python-weather==1.1.2
     googletrans:
         check: import googletrans; assert googletrans.__version__ == "3.1.0-alpha"
         install: googletrans==3.1.0a0
-
+    
 

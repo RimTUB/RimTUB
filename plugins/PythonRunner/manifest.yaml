@@ -3,6 +3,8 @@ version: 1.2.1
 native_RimTUB_version: 2.2
 available_RimTUB_versions:
     - 2.2
+    - 2.2.1
+    - dev-2.2.1
 online_check_RimTUB_versions: Off
 description: Запускает код на Python
 author: "built-in (@RimMirK на основе модуля от @KurimuzonAkuma)"

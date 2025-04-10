@@ -58,8 +58,8 @@ async def main(app: Client, mod: Module):
                 code = (msg.text or msg.caption).split(maxsplit=1)[1]
 
             await msg.edit_text(
-                b("<emoji id=5418368536898713475>🐍</emoji> Python " + pv, False) + "\n\n" +
-                pre(code, 'python') + "\n\n" + b("<emoji id=5821116867309210830>⏳</emoji> Выполняю...", False)
+                b(f"{emoji(5418368536898713475, '🐍')} Python " + pv, False) + "\n\n" +
+                pre(code, 'python') + "\n\n" + b(f"{emoji(5821116867309210830, '⏳')} Выполняю...", False)
             )
         
 
@@ -75,35 +75,35 @@ async def main(app: Client, mod: Module):
 
                 
                 t = (
-                    b("<emoji id=5418368536898713475>🐍</emoji> Python " + pv, False) + "\n\n" +
+                    b(f"{emoji(5418368536898713475, '🐍')} Python " + pv, False) + "\n\n" +
                     pre(code, 'python') + "\n\n" + (
-                        b("<emoji id=5472164874886846699>✨</emoji> Вывод:\n", False) +
+                        b(f"{emoji(5472164874886846699, '✨')} Вывод:\n", False) +
                         code_html(result) + '\n' if result.strip() != ''
-                        else b("<emoji id=5465665476971471368>❌</emoji> Вывода нет\n", False)
+                        else b("{emoji(5465665476971471368>❌')} Вывода нет\n", False)
                     ) + "\n" +
-                    b(f"<emoji id=5298728804074666786>⏱</emoji> Выполнено за {round(stop_time - start_time, 5)}s.", False)
+                    b(f"{emoji(5298728804074666786, '⏱')} Выполнено за {round(stop_time - start_time, 5)}s.", False)
                 )
 
                 if len(t) > 4096:
                     result = await paste(result)
                 
                     t = (
-                        b("<emoji id=5418368536898713475>🐍</emoji> Python " + pv, False) + "\n\n" +
+                        b(f"{emoji(5418368536898713475, '🐍')} Python " + pv, False) + "\n\n" +
                         pre(code, 'python') + "\n\n" + (
-                            b("<emoji id=5472164874886846699>✨</emoji> Вывод:\n", False) +
+                            b(f"{emoji(5472164874886846699, '✨')} Вывод:\n", False) +
                             result + '\n' if result.strip() != ''
-                            else b("<emoji id=5465665476971471368>❌</emoji> Вывода нет\n", False)
+                            else b(f"{emoji(5465665476971471368, '❌')} Вывода нет\n", False)
                         ) + "\n" +
-                        b(f"<emoji id=5298728804074666786>⏱</emoji> Выполнено за {round(stop_time - start_time, 5)}s.", False)
+                        b(f"{emoji(5298728804074666786, '⏱')} Выполнено за {round(stop_time - start_time, 5)}s.", False)
                     )
 
                 
                 return await msg.edit_text(t, disable_web_page_preview=True,)
             except TimeoutError:
                                 return await msg.edit_text(
-                    b("<emoji id=5418368536898713475>🐍</emoji> Python " + pv, False) + "\n\n" +
+                    b(f"{emoji(5418368536898713475, '🐍')} Python " + pv, False) + "\n\n" +
                     pre(code, 'python') + "\n\n" +
-                    b("<emoji id=5465665476971471368>❌</emoji> Время на исполнение кода исчерпано! TimeoutError", False),
+                    b(f"{emoji(5465665476971471368, '❌')} Время на исполнение кода исчерпано! TimeoutError", False),
 
                     disable_web_page_preview=True,
                 )
@@ -114,9 +114,9 @@ async def main(app: Client, mod: Module):
                 ex = err.getvalue()
                 tr = await paste(ex)
                 text = (
-                    b("<emoji id=5418368536898713475>🐍</emoji> Python " + pv, False) + "\n\n" +
+                    b(f"{emoji(5418368536898713475, '🐍')} Python " + pv, False) + "\n\n" +
                     pre(code, 'python') + "\n\n" +
-                    f"<emoji id=5465665476971471368>❌</emoji> {b(e.__class__.__name__)}: {b(e)}\n"
+                    f"{emoji(5465665476971471368, '❌')} {b(e.__class__.__name__)}: {b(e)}\n"
                     f"Traceback: {tr}"
                 )
                 await msg.edit(text, disable_web_page_preview=True)

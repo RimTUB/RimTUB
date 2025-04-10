@@ -14,7 +14,7 @@ async def main(app: Client, mod: Module):
 
     cmd = mod.cmd
 
-    @cmd(['logtail'])
+    @cmd(['logtail', 'glogtail'])
     async def _ltail(_, msg: M):
         lines = int(get_args(msg.text, 10))
         with open(Path(get_root(), 'logs', 'last_run.log'), 'r', encoding='utf-8') as f:
@@ -24,7 +24,7 @@ async def main(app: Client, mod: Module):
     
     @cmd(['glog'])
     async def _lg(_, msg: M):
-        logfile = get_args(msg.text, 'general')
+        logfile = get_args(msg.text, 'last_run')
         file = find_file(logfile, 'logs', 1, ['.log'])
         if not file:
             return await msg.edit(f"Файл {logfile} не найден!")
@@ -56,14 +56,13 @@ async def main(app: Client, mod: Module):
         for root, _, files in os.walk(folder_path):
             for file in files:
                 file_path = os.path.join(root, file)
-                try:
-                    os.remove(file_path)
-                except: pass
+                try_(os.remove(file_path))
 
 
     @cmd(['dellogs'])
     async def _gellogs(_, msg: M):
         logging.shutdown()
+        from utils._logs import install_log
 
         size = 0
         if os.path.isdir('logs'):
@@ -75,7 +74,7 @@ async def main(app: Client, mod: Module):
             install_log(logger)
             client.logger = logger
 
-        logger = logging.getLogger(f'TeleBot')
+        logger = logging.getLogger(f'RimTUB [BOT]')
         install_log(logger, bot=True)
         
         

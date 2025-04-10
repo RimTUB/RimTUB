@@ -1,1 +1,1 @@
-pip install aiohttp==3.9.3 aiosqlite==0.19.0 APScheduler==3.10.4 coloredlogs==15.0.1 playsound==1.2.2 https://github.com/KurimuzonAkuma/pyrogram/archive/dev.zip pyromod==3.1.6 TgCrypto==1.2.5 plyer==2.1.0 pyyaml==6.0.2 aiofiles==23.2.1 requests==2.32.3
+pip install aiohttp aiosqlite APScheduler coloredlogs https://github.com/KurimuzonAkuma/pyrogram/archive/v2.1.34.zip pyromod pyTelegramBotAPI TgCrypto plyer

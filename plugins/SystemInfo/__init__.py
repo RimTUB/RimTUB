@@ -49,14 +49,14 @@ async def main(app: Client, mod: Module):
     
     @mod.callback('sys_stats')
     async def call_sys_stats(call: C):
-        txt = (
-            f"<b>💻 Системная информация:\n\n"
+        txt = b(
+            f"💻 Системная информация:\n\n"
             f"🔧 CPU: {psutil.cpu_percent()}% | Ядер: {psutil.cpu_count()} (физ. {psutil.cpu_count(logical=False)})\n"
             f"📊 Память: {format_storage(psutil.virtual_memory().used, psutil.virtual_memory().total)}\n"
             f"💾 Диск: {format_storage(psutil.disk_usage('/').used, psutil.disk_usage('/').total)}\n"
             f"🐍 Python: {platform.python_version()} | {platform.python_implementation()}\n"
             f"🖥 ОС: {platform.system()} {platform.release()} | {platform.machine()}\n"
-            f"🕒 Аптайм: {sec_to_str(int(time.time() - psutil.boot_time()))}\n\n</b>"
+            f"🕒 Аптайм: {sec_to_str(int(time.time() - psutil.boot_time()))}\n\n"
         )
         buttons = await mod.prepare_buttons(
             Buttons(

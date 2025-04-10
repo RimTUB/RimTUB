@@ -38,7 +38,7 @@ async def main(app: Client, mod: Module):
             d: EmojiList = await app.invoke(SearchCustomEmoji(emoticon=emoticon, hash=0))
             t += emoticon + ": "
             for eid in d.document_id:
-                t += f"<emoji id='{eid}'>{emoticon}</emoji> "
+                t += emoji(eid, emoticon) + " "
             t += '\n'
         if t.strip():
             await msg.edit(t)
@@ -57,14 +57,22 @@ async def main(app: Client, mod: Module):
         
         emojis = {}
         for emj in emjs:
-            emojis[str(emj)] = (emj.attrs['id'])
+            emojis[str(emj)] = (emj.attrs['id'], emj.text)
         
         q1 = '"'
         q2 = "'"
-        
+
+    
         t = b('Custom Emojis:\n')
-        for html, id_ in emojis.items():
-            t += f"{html} : {code(id_)}\n{code(html)}\n{code(html.replace(q1, q2))}\n{code(html.replace(q1, ''))}\n\n"
+        for html, (id_, emoticon) in emojis.items():
+            t += (
+                f"{html} : {code(id_)}\n{code(html)}\n"
+                f"{code(html.replace(q1, q2))}\n"
+                f"{code(html.replace(q1, ''))}\n"
+                f"{code(f'emoji({id_}, {q1}{emoticon}{q1})')}\n"
+                f"{code(f'emoji({id_}, {q2}{emoticon}{q2})')}\n"
+                f"\n\n"
+            )
             
         await msg.edit(t)
 

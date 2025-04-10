@@ -3,9 +3,11 @@ version: 0.5.1
 native_RimTUB_version: 2.2
 available_RimTUB_versions:
     - 2.2
+    - 2.2.1
+    - dev-2.2.1
 online_check_RimTUB_versions: Off
 description: Инструменты для работы с QR-кодами
-author: "built-in (@vorsus)"
+author: "@vorsus"
 sections:
     _:
         description: Команды для работы с QR-кодами

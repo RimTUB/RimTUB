@@ -33,6 +33,6 @@ async def main(app: Client, mod: Module):
 
             try: pe = int(e) if int(e) == e else e
             except: pe = e
-            await msg.edit(f"<emoji id=5472164874886846699>✨</emoji> {equations} = {code(pe)}")
+            await msg.edit(f"{emoji(5472164874886846699, '✨')} {equations} = {code(pe)}")
         except Exception as ex:
-            await msg.edit(f"<emoji id=5465665476971471368>❌</emoji> Error!\n\nДля исправления: {code(f'{Config.PREFIX}{msg.command[0]} {equations}')}")
+            await msg.edit(f"{emoji(5465665476971471368, '❌')} Error!\n\nДля исправления: {code(f'{Config.PREFIX}{msg.command[0]} {equations}')}")

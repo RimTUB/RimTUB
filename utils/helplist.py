@@ -242,7 +242,7 @@ class HelpList:
         self.modules[module.name] = module
         return self
     
-    def get_module(self, name: str, default: Any = None, lower: bool = False, similarity_threshold: float = 0.6) -> Any:
+    def get_module(self, name: str, default: Any = None, lower: bool = False, similarity_threshold: float = 0.6) -> HModule | Any:
         """
         Получает модуль по имени или наиболее похожему имени.
 

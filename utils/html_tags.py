@@ -2,10 +2,11 @@ from functools import lru_cache
 
 __all__ = [
     'escape', 'format_tag',
-    'code', 'pre',
+    'code', 'pre', 'emoji', 
     'blockquote', 'bq',
     'b', 'i', 'a', 'u',
-    's', 'spoiler'
+    's', 'spoiler',
+    'remove_emoji_tags'
 ]
 
 
@@ -170,3 +171,26 @@ def spoiler(text: str, escape_html=True) -> str:
     :return str: Сгенерированный HTML тег для спойлера.
     """
     return format_tag('tg-spoiler', text, escape_content=escape_html)
+
+@cache_with_signature
+def emoji(id: int, emoticon: str) -> str:
+    """
+    создает тег для premium emoji
+    
+    :param int id: custom (premium) emoji id
+    :param str emoticon: стандартный емодзи который будет показывается если у юзера не будет Telegram Premium
+    :return str: Сгенерированный HTML тег для custom emoji
+    """
+    return format_tag('emoji', emoticon, False, True, id=id)
+
+import re
+
+@cache_with_signature
+def remove_emoji_tags(text: str) -> str:
+    """
+    Удаляет из текста премиум емодзи
+    
+    :param str text: текст с емодзи
+    :return str: текст без емодзи
+    """
+    return re.sub(r'<emoji[^>]*>(.*?)<\/emoji>', r'\1', text)

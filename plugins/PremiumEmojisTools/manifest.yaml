@@ -3,6 +3,8 @@ version: 1.0.0
 native_RimTUB_version: 2.2
 available_RimTUB_versions:
     - 2.2
+    - 2.2.1
+    - dev-2.2.1
     - dev-2.2
 online_check_RimTUB_versions: Off
 description: Инструменты для работы с премиум емодзи
@@ -27,7 +29,7 @@ requirements:
         install: beautifulsoup4==4.13.3
     lxml:
         check: import lxml; assert lxml.__version__ == "5.3.1"
-        install: lxml=5.3.1
+        install: lxml==5.3.1
     imageio:
         check: import imageio; assert imageio.__version__ == "2.25.0"
         install: imageio==2.25.0

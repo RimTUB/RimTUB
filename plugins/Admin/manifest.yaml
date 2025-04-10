@@ -1,0 +1,31 @@
+module_name: Admin
+version: 1.0.0
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - 2.2.1
+    - dev-2.2.1
+    - dev-2.2
+online_check_RimTUB_versions: Off
+
+description: |
+    Модуль для удобного администрирования чата.
+
+author: "@RimMirK"
+
+sections:
+    _: 
+        description: 
+        commands:
+            - names: [title]
+              arguments:
+                  - {text: "Ответ на сообщение", req: Yes}
+                  - {text: "Ник", req: Yes}
+              description: Установить ник (титулку)
+        features: ~
+
+requirements:
+    pytimeparse2:
+        check: import pytimeparse2; assert pytimeparse2.__version__ == "1.7.1"
+        install: pytimeparse2==1.7.1
+

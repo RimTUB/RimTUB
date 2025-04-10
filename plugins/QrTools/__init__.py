@@ -11,11 +11,11 @@ async def main(app: Client, mod: Module):
 
     @cmd(['makeqr'])
     async def makeqr(app_, msg: types.Message):
-        await msg.edit("<b>Uploading...</b>")
+        await msg.edit(b("Uploading..."))
         try:
             _, text = msg.text.split(maxsplit=1)
         except ValueError:
-            await msg.edit("<b>Вы не указали команду</b>")
+            await msg.edit(b("Вы не указали команду"))
             return
 
         file = False
@@ -29,7 +29,7 @@ async def main(app: Client, mod: Module):
         async with aiohttp.ClientSession() as session:
             async with session.get(url.format(text)) as r:
                 if r.status != 200:
-                    await msg.edit(f"<b>Ошибка при загрузке QR-кода (статус {r.status})</b>")
+                    await msg.edit(b(f"Ошибка при загрузке QR-кода (статус {r.status})"))
                     return
                 qrcode_content = await r.read()
 
@@ -53,9 +53,9 @@ async def main(app: Client, mod: Module):
             ok = await check(reply)
             if not ok:
                 text = (
-                    "<b>Это не изображение!</b>"
+                    b("Это не изображение!")
                     if reply
-                    else "<b>Нечего не передано!</b>"
+                    else b("Нечего не передано!")
                 )
                 await msg.edit(text)
                 return
@@ -69,16 +69,16 @@ async def main(app: Client, mod: Module):
             form_data.add_field('file', file.getvalue(), filename='qr.png', content_type='image/png')
             async with session.post(url, data=form_data) as resp:
                 if resp.status != 200:
-                     await msg.edit(f"<b>Ошибка при чтении QR-кода (статус {resp.status})</b>")
+                     await msg.edit(fb("Ошибка при чтении QR-кода (статус {resp.status})"))
                      return
                 try:
                     resp_json = await resp.json()
                 except aiohttp.ContentTypeError:
-                    await msg.edit("<b>Не удалось декодировать JSON ответ</b>")
+                    await msg.edit(b("Не удалось декодировать JSON ответ"))
                     return
         text = resp_json[0]["symbol"][0]["data"]
         if not text:
-            text = "<b>Невозможно распознать или QR пуст!</b>"
+            text = b("Невозможно распознать или QR пуст!")
         await utils.answer(message, text)
 
 async def check(msg):

@@ -1,7 +1,7 @@
 import sys, time
 
 from pyrogram import __version__
-from pyrogram.types import Message as M
+from pyrogram.types import Message as M, LinkPreviewOptions as LPO
 
 from utils import *
 
@@ -55,49 +55,49 @@ def build_module_help_text(mod, section_name='_', header=True):
         help_text += "Нет возможностей в этой секции.\n"
 
     
-    help_text += "</blockquote>\n"
+    help_text += "</blockquote>"
 
     
 
-    other_sections = [sec for sec_name, sec in mod.get_sections().items() if sec_name != section_name]
-    help_text += b(f"Другие секции ({len(other_sections)}):") + "\n"
-    help_text += "<blockquote>"
-    if other_sections:
-        help_text += '\n'
-        for sec in other_sections:
+    # other_sections = [sec for sec_name, sec in mod.get_sections().items() if sec_name != section_name]
+    # help_text += b(f"Другие секции ({len(other_sections)}):") + "\n"
+    # help_text += "<blockquote>"
+    # if other_sections:
+    #     help_text += '\n'
+    #     for sec in other_sections:
             
-            commands_count = sec.get_commands_count()
-            features_count = sec.get_features_count()
+    #         commands_count = sec.get_commands_count()
+    #         features_count = sec.get_features_count()
 
-            if sec.name != '_':
-                section_text = b(f"{sec.name} ")
-            else:
-                section_text = b(f"Основная секция ")
+    #         if sec.name != '_':
+    #             section_text = b(f"{sec.name} ")
+    #         else:
+    #             section_text = b(f"Основная секция ")
 
-            if commands_count > 0:
-                section_text += f" ({commands_count} {plural(commands_count, ('команда', 'команды', 'команд'))}"
+    #         if commands_count > 0:
+    #             section_text += f" ({commands_count} {plural(commands_count, ('команда', 'команды', 'команд'))}"
             
-            if features_count > 0:
-                if commands_count > 0:
-                    section_text += ' и '
-                else:
-                    section_text += '('
-                section_text += f"{features_count} {plural(features_count, ('возможность', 'возмоожности', 'возможностей'))})"
-            else:
-                if commands_count > 0:
-                    section_text += ')'
+    #         if features_count > 0:
+    #             if commands_count > 0:
+    #                 section_text += ' и '
+    #             else:
+    #                 section_text += '('
+    #             section_text += f"{features_count} {plural(features_count, ('возможность', 'возмоожности', 'возможностей'))})"
+    #         else:
+    #             if commands_count > 0:
+    #                 section_text += ')'
             
-            if sec.name != '_':
-                section_text += f"\n{code(Config.PREFIX + 'h ' + mod.name + ':' + sec.name)} чтобы открыть"
-                help_text += section_text + "\n\n"
-            else:
-                section_text += f"\n{code(Config.PREFIX + 'h ' + mod.name)} чтобы открыть"
-                help_text += section_text + "\n\n"
-    else:
-        help_text += "Нет других секций в этом модуле.\n"
+    #         if sec.name != '_':
+    #             section_text += f"\n{code(Config.PREFIX + 'h ' + mod.name + ':' + sec.name)} чтобы открыть"
+    #             help_text += section_text + "\n\n"
+    #         else:
+    #             section_text += f"\n{code(Config.PREFIX + 'h ' + mod.name)} чтобы открыть"
+    #             help_text += section_text + "\n\n"
+    # else:
+    #     help_text += "Нет других секций в этом модуле.\n"
 
         
-    help_text += "</blockquote>"
+    # help_text += "</blockquote>"
 
     help_text += f"\n\n{b('Легенда: ')}\n   {code('< >')} – обязательный аргумент\n   {code('[ ]')} – необязательный аргумент.\n   {code(' / ')} – или"
 
@@ -131,7 +131,7 @@ async def main(app: Client, mod: Module):
                 await app.delete_messages(int(chat_id), int(msg_id))
         else:
             if not Config.DISABLE_STARTUP_MESSAGE:
-                await mod.send_buttons('me', f'<b>RimTUB {Config.VERSION} Запущен!</b>\nПрефикс: «<code>{Config.PREFIX}</code>»', buttons)
+                await mod.send_buttons('me', f'<b>RimTUB {Config.VERSION} Запущен!</b>\nПрефикс: «<code>{escape(Config.PREFIX)}</code>»', buttons)
             
             
 
@@ -141,6 +141,19 @@ async def main(app: Client, mod: Module):
             return c.answer('Это не твоя кнопка!', True)
         await c.edit_message_text(f"Лог запуска: {c.extra_data.get('log')}")
         
+    @mod.callback(startswith='module:')
+    async def _module(c: C):
+        _, module, section = c.data.split(':')
+        
+        modul = helplist.get_module(module)
+        
+        buttons_list = []   
+        for sect in modul.get_sections().keys():
+            buttons_list.append([Button('Главная секция' if sect == '_' else sect, f'module:{module}:{sect}')])
+        buttons = await mod.prepare_buttons(Buttons(buttons_list, c.extra_data))
+        
+        await c.edit_message_text(remove_emoji_tags(build_module_help_text(modul, section)), reply_markup=buttons, link_preview_options=LPO(is_disabled=True))
+
 
     @cmd(['help', 'h'])
     async def _help(_, msg: M):
@@ -148,13 +161,31 @@ async def main(app: Client, mod: Module):
 
         if mod_name:
             modn = mod_name.split(':')[0]
-            mod = helplist.get_module(modn, lower=True)
-            if not mod:
+            modul = helplist.get_module(modn, lower=True)
+            if not modul:
                 return await msg.edit(f"Модуль {mod_name} не найден!\nПосмотреть список модулей: {code(Config.PREFIX+'help')}")
             
             section_name = mod_name.split(':')[1] if ':' in mod_name else '_'
 
-            return await msg.edit(build_module_help_text(mod, section_name), disable_web_page_preview=True)
+            other_sections = [sec for sec_name, sec in modul.get_sections().items() if sec_name != section_name]
+            
+            if other_sections:
+                
+                buttons_list = []
+                for sect in modul.get_sections().keys():
+                    buttons_list.append([Button('Главная секция' if sect == '_' else sect, f'module:{modul.name}:{sect}')])
+                buttons = Buttons(buttons_list)
+                
+                await mod.send_buttons(
+                    msg.chat.id,
+                    remove_emoji_tags(build_module_help_text(modul, section_name)),
+                    buttons, dict(link_preview_options=LPO(is_disabled=True))
+                )
+                await msg.delete()
+            else:
+                await msg.edit(build_module_help_text(modul, section_name))
+            
+            return 
 
         help_text = (HEADER + "\n" if Config.SHOW_HEADER_IN_HELP else '') + f"\nМодули (плагины): {b(helplist.get_modules_count())}\n"
         commands_count, features_count = 0, 0
@@ -193,9 +224,9 @@ async def main(app: Client, mod: Module):
             f"Канал: {b(a('@RimTUB', 'https://t.me/RimTUB'), False)}\n"
             f"Время работы: {b( sec_to_str(time.perf_counter() - bot_uptime))}\n"
             f"\n"
-            f"<emoji id=5418368536898713475>🐍</emoji> Python: {b( sys.version.split()[0] )}\n"
-            f"<emoji id=5246743576485832125>🔥</emoji> Pyrogram: {b( __version__ )}\n"
-            f"<emoji id=5215186239853964761>💿</emoji> ОС: {b( sys.platform )}\n"
+            f"{emoji(5418368536898713475, '🐍')} Python: {b( sys.version.split()[0] )}\n"
+            f"{emoji(5246743576485832125, '🔥')} Pyrogram: {b( __version__ )}\n"
+            f"{emoji(5215186239853964761, '💿')} ОС: {b( sys.platform )}\n"
             f"\n"
             f"Модули (плагины): {b(helplist.get_modules_count())}\n"
             f"Всего команд: {b(sum([*map(lambda i: i.get_commands_count(), helplist.get_modules())]))}\n"

@@ -1,4 +1,4 @@
-import asyncio, subprocess, platform
+import asyncio, platform
 from pyrogram import types
 from utils import *
 
@@ -33,20 +33,25 @@ async def main(app: Client, mod: Module):
 
     @cmd(['t'])
     async def terminal(_, msg: types.Message):
-        await msg.edit("<b>Uploading...</b>")
+        await msg.edit(b("Uploading..."))
         try:
             _, text = msg.text.split(maxsplit=1)
         except ValueError:
-            await msg.edit("<b>Вы не указали команду</b>")
+            await msg.edit(b("Вы не указали команду"))
             return
 
         output = await execute_command(text)
         if len(output) > 3000:
-            await msg.edit("<b>Слишком большой вывод! В разработке вывод по ссылке</b>")
+            await msg.edit(
+                b("Команда\n") +
+                f"{pre(text, 'shell')}\n\n" +
+                b("Вывод\n") +
+                f"{await paste(output, 'plaintext')}"
+            )
             return 
         await msg.edit(
-            "<b>Команда</b>\n"
-            f"<pre>{text}</pre>\n\n"
-            "<b>Вывод</b>\n"
-            f"<pre>{output}</pre>"
+            b("Команда\n") +
+            f"{pre(text, 'shell')}\n\n" +
+            b("Вывод\n") +
+            f"{pre(output)}"
             )

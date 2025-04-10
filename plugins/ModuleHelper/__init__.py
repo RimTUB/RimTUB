@@ -12,14 +12,9 @@ from utils import *
 from utils import M as Message
 
 
-
-def remove_emoji_tags(text):
-    return re.sub(r'<emoji[^>]*>(.*?)<\/emoji>', r'\1', text)
-
-
 async def dml(app, mod: Module, msg, notify, url, no_alert=False):
     
-    plugins = Path(get_root(), 'plugins')
+    plugins = get_root(True) / 'plugins'
 
     if not no_alert:
         if urlparse(url).netloc not in Config.DML_WHITELIST:
@@ -46,11 +41,11 @@ async def dml(app, mod: Module, msg, notify, url, no_alert=False):
         if 'Content-Disposition' in r.headers:
             filename = r.headers['Content-Disposition'].split('filename=')[-1].strip('";')
         else:
-            await notify("<emoji id='5240241223632954241'>🚫</emoji> Ошибка! Модуль не найден, либо поврежден!")
+            await notify(f"{emoji(5240241223632954241, '🚫')} Ошибка! Модуль не найден, либо поврежден!")
             return
 
         if not filename.endswith('.rimtub-module'):
-            await notify("<emoji id='5240241223632954241'>🚫</emoji> Ошибка! Файл не является файлом модуля RimTUB!")
+            await notify(f"{emoji(5240241223632954241, '🚫')} Ошибка! Файл не является файлом модуля RimTUB!")
             return
 
         save_path = plugins / 'ModuleHelper' / filename
@@ -68,16 +63,16 @@ async def dml(app, mod: Module, msg, notify, url, no_alert=False):
             if r[0] == 'error':
                 raise r[1]
 
-        await notify(f"<emoji id=5206607081334906820>✅</emoji> Модуль <b>{os.path.splitext(filename)[0]}</b> успешно загружен и установлен!")
+        await notify(f"{emoji(5206607081334906820, '✅')} Модуль {b(os.path.splitext(filename)[0])} успешно загружен и установлен!")
 
     except requests.exceptions.RequestException as e:
         await notify(
-            b(f"<emoji id='5240241223632954241'>🚫</emoji> Произошла ошибка! {escape(e.__class__.__name__)}.\n", False)
+            b(f"{emoji(5240241223632954241, '🚫')} Произошла ошибка! {escape(e.__class__.__name__)}.\n", False)
             + f"Возможно ссылка на скачивание неверна либо содержит ошибку"
         )  
     except Exception as e:
         await notify(
-            b(f"<emoji id='5240241223632954241'>🚫</emoji> Произошла ошибка: {escape(e.__class__.__name__)}:\n", False)
+            b(f"{emoji(5240241223632954241, '🚫')} Произошла ошибка: {escape(e.__class__.__name__)}:\n", False)
             + escape(e) + f"\n{await paste(format_exc())}"
         )
         mod.logger.error('dml error', exc_info=True)
@@ -146,13 +141,13 @@ async def dmf(app: Client, mod: Module, msg, notify, file_path, name, no_alert=F
         
         return
     try:
-        await notify(f"<emoji id='5386367538735104399'>⌛</emoji> Загружаю <b>{name}</b>")
+        await notify(f"{emoji(5386367538735104399, '⌛')} Загружаю {b(name)}")
         mpath = Path(get_root()) / 'plugins' / name
         isset = os.path.exists(mpath)
         unpack_module(file_path, mpath)
         manifest = read_yaml(mpath / 'manifest.yaml')
         if not no_alert_version:
-            if versions := manifest.get('available_RimTUB_versions', []):
+            if versions := list(map(str, manifest.get('available_RimTUB_versions', []))):
                 if Config.VERSION not in versions:
                     buttons = Buttons(
                         [
@@ -194,7 +189,12 @@ async def dmf(app: Client, mod: Module, msg, notify, file_path, name, no_alert=F
                           "Устанавливайте модуль на свой страх и риск.", False),
                         buttons=buttons, message_thread_id=msg.message_thread_id
                     )
-                    await msg.delete()
+                    if not hasattr(msg, '_client'):
+                        msg._client = app
+                    elif not msg._client:
+                        msg._client = app
+                    if msg._client:
+                        await msg.delete()
                     return
                 
         os.remove(file_path)
@@ -218,13 +218,13 @@ async def dmf(app: Client, mod: Module, msg, notify, file_path, name, no_alert=F
         except:
             cap = ''
         if isset:
-            return await notify("<emoji id='5206607081334906820'>✅</emoji> Модуль обновлен и перезапущен!" + "\n\n" + cap)
+            return await notify(f"{emoji(5206607081334906820, '✅')} Модуль обновлен и перезапущен!" + "\n\n" + cap)
         await notify(
-            "<emoji id='5206607081334906820'>✅</emoji> Модуль загружен и запущен!" + "\n\n" + cap
+            f"{emoji(5206607081334906820, '✅')} Модуль загружен и запущен!" + "\n\n" + cap
         )
     except Exception as e:
         await notify(
-            b(f"<emoji id='5240241223632954241'>🚫</emoji> Произошла ошибка!\n{await paste(format_exc())}", False)
+            b(f"{emoji(5240241223632954241, '🚫')} Произошла ошибка!\n{await paste(format_exc())}", False)
         )
         mod.logger.error('dmf error', exc_info=True)
 
@@ -277,13 +277,13 @@ async def main(app: Client, mod: Module):
                     if r.document.mime_type in ('application/zip') and r.document.file_name.endswith('.rimtub-module'):
                         pass
                     else:
-                        return await msg.edit("<emoji id='5210952531676504517'>❌</emoji> Ошибка: Файл не является модулем!")
+                        return await msg.edit(f"{emoji(5210952531676504517, '❌')} Ошибка: Файл не является модулем!")
                 else:
-                    return await msg.edit("<emoji id='5210952531676504517'>❌</emoji> Ошибка: Ответь на сообщение с модулем!")
+                    return await msg.edit(f"{emoji(5210952531676504517, '❌')} Ошибка: Ответь на сообщение с модулем!")
             else:
-                return await msg.edit("<emoji id='5274099962655816924'>❗️</emoji> Ответь на сообщение!")
+                return await msg.edit(f"{emoji(5274099962655816924, '❗️')} Ответь на сообщение!")
             await msg.edit(
-                "<emoji id='5386367538735104399'>⌛</emoji> Загружаю..."
+                f"{emoji(5386367538735104399, '⌛')} Загружаю..."
             )
 
             name = r.document.file_name.rsplit(".", 1)[0]
@@ -299,7 +299,7 @@ async def main(app: Client, mod: Module):
         try:
             url = msg.text.split(maxsplit=1)[1]
         except IndexError:
-            await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Вставь ссылку!")
+            await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Вставь ссылку!")
             return
 
         return await dml(app, mod, msg, msg.edit, url, False)
@@ -311,12 +311,12 @@ async def main(app: Client, mod: Module):
         try:
             _, name = msg.text.split(maxsplit=1)
         except ValueError:
-            return await msg.edit("<emoji id='5274099962655816924'>❗️</emoji> Напиши название модуля!")
+            return await msg.edit(f"{emoji(5274099962655816924, '❗️')} Напиши название модуля!")
 
         module_path = Path(find_directory(name, 'plugins', 1))
 
         if not module_path:
-            return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
+            return await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Такой модуль не найден!")
 
         manifest = read_yaml(module_path / 'manifest.yaml')
 
@@ -341,7 +341,7 @@ async def main(app: Client, mod: Module):
             await msg.reply_document(module_file, caption=cap)
             await msg.delete()
         except Exception as e:
-            await msg.edit(f"<emoji id='5260293700088511294'>⛔️</emoji> Произошла неизвестная ошибка!\n{await paste(format_exc())}")
+            await msg.edit(f"{emoji(5260293700088511294, '⛔️')} Произошла неизвестная ошибка!\n{await paste(format_exc())}")
             raise LoadError() from e
         finally:
             os.remove(module_file)
@@ -351,17 +351,17 @@ async def main(app: Client, mod: Module):
         try:
             _, name = msg.text.split(maxsplit=1)
         except ValueError:
-            return await msg.edit("<emoji id='5274099962655816924'>❗️</emoji> Напиши название модуля!")
+            return await msg.edit(f"{emoji(5274099962655816924, '❗️')} Напиши название модуля!")
         
         module_path = find_directory(name, 'plugins', 1)
         if not module_path:
-            return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
+            return await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Такой модуль не найден!")
         
         shutil.rmtree(module_path)
         await app.stop_module(os.path.split(module_path)[-1], unload_help=True, all_clients=True)
 
         await msg.edit(
-            f"<emoji id='5445267414562389170'>🗑</emoji> Модуль {b(os.path.split(module_path)[-1])} удален!"
+            f"{emoji(5445267414562389170, '🗑')} Модуль {b(os.path.split(module_path)[-1])} удален!"
         )
 
 
@@ -371,7 +371,7 @@ async def main(app: Client, mod: Module):
         try:
             module_path = find_directory(module_name, 'plugins', 1)
             if not module_path:
-                return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
+                return await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Такой модуль не найден!")
             name = os.path.basename(module_path)
             await app.load_module(name, restart=True, exception=True, all_clients=True)
 
@@ -385,7 +385,7 @@ async def main(app: Client, mod: Module):
             raise LoadError() from e
             
         else:
-            await msg.edit(f"<emoji id='5206607081334906820'>✅</emoji> Модуль {b(os.path.basename(module_path))} перезагружен!")
+            await msg.edit(f"{emoji(5206607081334906820, '✅')} Модуль {b(os.path.basename(module_path))} перезагружен!")
 
     @cmd(['offm', 'stopm'])
     async def _offm(app: Client, msg):
@@ -393,7 +393,7 @@ async def main(app: Client, mod: Module):
         try:
             module_path = find_directory(module_name, 'plugins', 1)
             if not module_path:
-                return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
+                return await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Такой модуль не найден!")
             name = os.path.split(module_path)[-1]
 
             disabled_modules = await mod.db.get('disabled_modules', [])
@@ -405,7 +405,7 @@ async def main(app: Client, mod: Module):
             await msg.edit(f'Не удалось выключить модуль!\n{await paste(format_exc())}')
             raise LoadError() from e
         else:
-            await msg.edit(f"<emoji id='5206607081334906820'>✅</emoji> Модуль {b(name)} выключен!")
+            await msg.edit(f"{emoji(5206607081334906820, '✅')} Модуль {b(name)} выключен!")
 
 
     @cmd(['onm', 'startm'])
@@ -414,7 +414,7 @@ async def main(app: Client, mod: Module):
         try:
             module_path = find_directory(module_name, 'plugins', 1)
             if not module_path:
-                return await msg.edit("<emoji id='5447644880824181073'>⚠️</emoji> Такой модуль не найден!")
+                return await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Такой модуль не найден!")
             name = os.path.split(module_path)[-1]
 
             
@@ -428,7 +428,7 @@ async def main(app: Client, mod: Module):
             await msg.edit(f'Не удалось включить модуль!\n{await paste(format_exc())}')
             raise LoadError() from e
         else:
-            await msg.edit(f"<emoji id='5206607081334906820'>✅</emoji> Модуль {b(name)} включен!")
+            await msg.edit(f"{emoji(5206607081334906820, '✅')} Модуль {b(name)} включен!")
 
     @cmd(['offms'])
     async def _offms(app: Client, msg):

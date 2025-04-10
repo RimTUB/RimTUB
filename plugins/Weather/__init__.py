@@ -18,7 +18,7 @@ async def main(app: Client, mod: Module):
 
     @cmd('wt')
     async def _wt(_, msg: M):
-        await msg.edit('<emoji id=5821116867309210830>⏳</emoji> Загрузка..')
+        await msg.edit(f'{emoji(5821116867309210830, "⏳")} Загрузка..')
 
         args = msg.text.split()
         if len(args) < 2:

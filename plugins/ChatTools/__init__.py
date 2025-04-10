@@ -37,11 +37,11 @@ async def main(app: Client, mod: Module):
         ping = await check_ping(app)
 
         if ping <= 100:
-            e = '<emoji id="5294160616729096737">🟢</emoji>'
+            e = emoji(5294160616729096737, '🟢')
         elif ping <= 200:
-            e = '<emoji id="5294234838058938175">🟡</emoji>'
+            e = emoji(5294234838058938175, '🟡')
         else:
-            e = '<emoji id="5291899179008798421">🔴</emoji>'
+            e = emoji(5291899179008798421, '🔴')
             
         await msg.edit(b(f"Pong!{e}\nPing: {ping:.1f}ms", False))
 
@@ -49,7 +49,7 @@ async def main(app: Client, mod: Module):
     @cmd(['online'])
     async def _online(app, msg):
         await msg.edit(
-            "<emoji id=5427009714745517609>✅</emoji> "
+            f"{emoji(5427009714745517609, '✅')} "
             "Теперь ты всегда в сети!\n"
             "Для отмены пиши " + code(Config.PREFIX + 'offline')
         )
@@ -59,4 +59,4 @@ async def main(app: Client, mod: Module):
     @cmd(['offline'])
     async def _offline(app, msg):
         await mod.db.set('online', False)
-        await msg.edit("<emoji id=5427009714745517609>✅</emoji> Теперь ты не в сети!")
+        await msg.edit(f"{emoji(5427009714745517609, '✅')} Теперь ты не в сети!")

@@ -199,13 +199,13 @@ class Module(SingletonByAttribute):
         return buttons
 
 
-    async def send_buttons(self, chat_id, text, buttons: Buttons, **kwargs):
+    async def send_buttons(self, chat_id, text, buttons: Buttons, input_text_message_content_params: dict = None, **kwargs):
         id = f"{time.time()}+{generate_random_identifier()}"
 
         if not getattr(buttons, '_prepared', False):
             buttons = await self.prepare_buttons(buttons)
 
-        _objects[id] = dict(text=text, buttons=buttons)
+        _objects[id] = dict(text=text, buttons=buttons, input_text_message_content_params=input_text_message_content_params or {})
 
 
         results = await self.client.get_inline_bot_results(self.client.bot_username, f"iqm:{id}")

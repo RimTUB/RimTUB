@@ -48,13 +48,14 @@ async def main(app: Client, mod: Module):
                 aliases.update({alias: command})
                 await mod.db.set('aliases', aliases)
 
-                await msg.edit(f"Алиас добавлен!\n"
-                               f"<code>{Config.PREFIX}{alias}</code>  <code>-></code>  "
-                               f"<code>{Config.PREFIX}{command}</code>")
+                await msg.edit(
+                    f"Алиас добавлен!\n" +
+                    code(f"{Config.PREFIX}{alias}") + "  " + code('->') + "  " +
+                    code(f"{Config.PREFIX}{command}"))
             else:
                 await msg.edit("Команда не найдена!")
         except:
-            await msg.edit(f"Используй <code>{Config.PREFIX}{msg.command[0]}</code> " + escape("<алиас> <команда>"))
+            await msg.edit(f"Используй " + code(f"{Config.PREFIX}{msg.command[0]}") + " " + escape("<алиас> <команда>"))
     
     @cmd('delalias')
     async def _delalias(_, msg):
@@ -65,9 +66,9 @@ async def main(app: Client, mod: Module):
             del aliases[alias]
             await mod.db.set('aliases', aliases)
 
-            await msg.edit(f"Алиас <b>{alias}</b> удален! Перезагрузи юб для приминения!")
+            await msg.edit(f"Алиас {b(alias)} удален! Перезагрузи юб для приминения!")
         except:
-            await msg.edit(f"Используй <code>{Config.PREFIX}{msg.command[0]}</code> " +escape("<алиас>"))
+            await msg.edit(f"Используй " + code(f"{Config.PREFIX}{msg.command[0]}") + " " + escape("<алиас>"))
 
     @cmd('aliases')
     async def _aliases(_, msg):
