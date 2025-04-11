@@ -1,0 +1,22 @@
+module_name: ChatsCounter
+version: 1.0.1
+native_RimTUB_version: 2.2
+available_RimTUB_versions:
+    - 2.2
+    - dev-2.2
+    - 2.2.1
+    - dev-2.2.1
+    - 2.2.2
+    - dev-2.2.2
+online_check_RimTUB_versions: Off
+description: Считает кол-во Ваших чатов
+author: "@RimMirK по заказу @DragonFire20"
+sections:
+    _: 
+        description:
+        commands:
+            - names: [ccount]
+              arguments: ~
+              description: Посчитать кол-во чатов
+              
+requirements: ~

@@ -6,7 +6,6 @@ from .misc import *
 from .strings import *
 from .module import *
 from .modify_pyrogram_client import *
-from .getanswer import *
 from .filters import *
 from .bot_helper import *
 from .pastes import *

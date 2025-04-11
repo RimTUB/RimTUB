@@ -26,9 +26,9 @@ async def gpt4(prompt, model):
                     "time": f"{response_time:.2f}"
                 }
     except aiohttp.ClientError as e:
-        return False, f"<b>Произошла ошибка запроса</b>"
+        return False, b(f"Произошла ошибка запроса")
     except Exception as e:
-        return False, f"<b>Произошла непредвиденная ошибка</b>"
+        return False, b(f"Произошла непредвиденная ошибка")
 
 
 async def main(app: Client, mod: Module):
@@ -39,24 +39,24 @@ async def main(app: Client, mod: Module):
 
     @cmd(['ai'])
     async def ai(_, msg: types.Message):
-        await msg.edit("<b>Загрузка...</b>")
+        await msg.edit(b("Загрузка..."))
         try:
             _, text = msg.text.split(maxsplit=1)
         except ValueError:
-            await msg.edit("<b>Вы не указали запрос!</b>")
+            await msg.edit(b("Вы не указали запрос!"))
             return
 
         if text in ["help", "h"]:
-            result_text = """
-<b>Информация и гайд по использованию модуля</b>
+            result_text = f"""
+{b('Информация и гайд по использованию модуля')}
 
 1. Есть несколько видов моделей:
- gpt4, 4turbo, gemini, llm3.1
- по умолчанию стоит gpt4
- .ai -model Запрос
- .ai -gemini Привет 
+ {code('gpt4')}, {code('4turbo')}, {code('gemini')}, {code('llm3.1')}
+ по умолчанию стоит {code('gpt4')}
+ {code('.ai -model ')}Запрос
+ .{code('ai -gemini ')}Привет 
 
-<i>Если у вас возникают проблемы с модулем пишите в лс: @vorsus</i>
+{i('Если у вас возникают проблемы с модулем пишите в лс: @vorsus')}
 """ 
             await msg.edit(result_text)
             return
@@ -88,5 +88,5 @@ async def main(app: Client, mod: Module):
             f"Время ответа: `{result['time']}` секунд"
             )
         if len(result_text) > 4000:
-            await msg.edit("<b>Отправка больших ответов в разработке</b>")
+            result_text = result_text.replace(result['answer'], await paste(result['answer']))
         await msg.edit(result_text, parse_mode=enums.ParseMode.MARKDOWN)

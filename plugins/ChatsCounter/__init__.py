@@ -2,16 +2,7 @@ from time import perf_counter
 from pyrogram.enums.chat_type import ChatType
 from utils import *
 
-helplist.add_module(
-    HModule(
-        __package__,
-        description="Считает кол-во Ваших чатов",
-        author="@RimMirK по заказу @DragonFire20",
-        version='1.0.1',
-    ).add_command(
-        Command(['ccount'], [], 'Посчитать кол-во чатов')
-    )
-)
+
 
 
 async def main(app: Client, mod: Module):
@@ -25,7 +16,7 @@ async def main(app: Client, mod: Module):
         channels = 0
         bots = 0
         general = 0
-        await message.edit("<b>Получаем информацию...</b>")
+        await message.edit(b("Получаем информацию..."))
         async for dialog in app.get_dialogs():
             match dialog.chat.type:
                 case ChatType.PRIVATE:
@@ -43,13 +34,12 @@ async def main(app: Client, mod: Module):
         end = perf_counter()
         ms = end - start
         await message.edit(
-            "<b>Количество ваших чатов в Telegram:</b>\n\n"
-            f'<emoji id="5373012449597335010">👤</emoji> Личных чатов: {b(users)}\n'
-            f'<emoji id="5372926953978341366">👥</emoji> Групп: {b(groups)}\n'
-            f'<emoji id="5370867268051806190">🫂</emoji> Супергрупп: {b(supergroups)}\n'
-            f'<emoji id="5296502602266067656">📢</emoji> Каналов: {b(channels)}\n'
-            f'<emoji id="5372981976804366741">🤖</emoji> Ботов: {b(bots)}\n\n'
-            '<emoji id="5438496463044752972">⭐️</emoji> '
-                + b(f"Всего: {general}\n\n") +
-            f'<emoji id="5298728804074666786">⏱</emoji> Подсчитано за <b>{pnum(round(ms, 2))}</b> c.'
+            b("Количество ваших чатов в Telegram:\n\n") +
+            f"{emoji(5373012449597335010, '👤')} Личных чатов: {b(users)}\n"
+            f"{emoji(5372926953978341366, '👥')} Групп: {b(groups)}\n"
+            f"{emoji(5370867268051806190, '🫂')} Супергрупп: {b(supergroups)}\n"
+            f"{emoji(5296502602266067656, '📢')} Каналов: {b(channels)}\n"
+            f"{emoji(5372981976804366741, '🤖')} Ботов: {b(bots)}\n\n"
+            f"{emoji(5438496463044752972, '⭐️')} {b(f'Всего: {general}')}\n\n"
+            f"{emoji(5298728804074666786,  '⏱')} Подсчитано за {b(pnum(round(ms, 2)))} c."
         )

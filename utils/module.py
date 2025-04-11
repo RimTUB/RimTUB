@@ -237,7 +237,7 @@ class Module(SingletonByAttribute):
 
     def callback(
         self, callback_data='', startswith='', group=None,
-        allowed_ids: List[int] = None, message='Это не твоя кнопка!', show_alert=True
+        is_private=True, allowed_ids: List[int] = None, message='Это не твоя кнопка!', show_alert=True
     ):
         
         def _flt(data):
@@ -252,8 +252,8 @@ class Module(SingletonByAttribute):
                 return True
             return False
 
-        if not allowed_ids:
-            allowed_ids = [client.me.id for client in clients]
+        if is_private and not allowed_ids:
+            allowed_ids = [self.client.me.id]
             
         def decorator(func):
 
@@ -263,9 +263,10 @@ class Module(SingletonByAttribute):
             )
             async def __wrapper(c, *args, **kwargs):
                 try:
-                    if c.from_user.id not in allowed_ids:
-                        await c.answer(message, show_alert)
-                        return None
+                    if is_private:
+                        if c.from_user.id not in allowed_ids:
+                            await c.answer(message, show_alert)
+                            return None
                     
                     c = getattr(c, 'original_callback', c)
                     _, extra_data_id, moddata = c.data.split(':', 2)

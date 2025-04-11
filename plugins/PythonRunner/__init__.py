@@ -2,6 +2,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from traceback import print_exc
 import asyncio, time, sys
 from io import StringIO
+from pyrogram.types import LinkPreviewOptions as LPO
 
 from utils import *
 code_html = code
@@ -98,14 +99,14 @@ async def main(app: Client, mod: Module):
                     )
 
                 
-                return await msg.edit_text(t, disable_web_page_preview=True,)
+                return await msg.edit_text(t, link_preview_options=LPO(is_disabled=True))
             except TimeoutError:
                                 return await msg.edit_text(
                     b(f"{emoji(5418368536898713475, '🐍')} Python " + pv, False) + "\n\n" +
                     pre(code, 'python') + "\n\n" +
                     b(f"{emoji(5465665476971471368, '❌')} Время на исполнение кода исчерпано! TimeoutError", False),
 
-                    disable_web_page_preview=True,
+                    link_preview_options=LPO(is_disabled=True)
                 )
             except Exception as e:
                 err = StringIO()
@@ -119,7 +120,7 @@ async def main(app: Client, mod: Module):
                     f"{emoji(5465665476971471368, '❌')} {b(e.__class__.__name__)}: {b(e)}\n"
                     f"Traceback: {tr}"
                 )
-                await msg.edit(text, disable_web_page_preview=True)
+                await msg.edit(text, link_preview_options=LPO(is_disabled=True))
         
         mod.add_task(_todo())
 

@@ -5,8 +5,8 @@ from pyrogram.enums import ClientPlatform
 
 class DefaultConfig:
 
-    VERSION = '2.2.1'
-    VERSION_TUPLE = (2, 2, 1, 'release', 0)
+    VERSION = '2.2.2'
+    VERSION_TUPLE = (2, 2, 2, 'dev', 0)
 
 
     PHONES: List[str]

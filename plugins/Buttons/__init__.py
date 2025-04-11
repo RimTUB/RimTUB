@@ -69,7 +69,7 @@ async def main(app: Client, mod: Module):
     # создаем обработчик на callback_data=='hello'
     # желательно указывать group, для корректной работы,
     # но это НЕ Обязательно
-    @mod.callback('hello', group=group)
+    @mod.callback('hello', group=group, is_private=False) # делаем кнопку публичной
     async def _hello(c: C):
         # отвечаем на нажатие окошком
         await c.answer("Hi!", True)
@@ -183,7 +183,7 @@ async def main(app: Client, mod: Module):
 
 
     # обработчик уже нужен на startswith
-    @mod.callback(startswith='number', group=group)
+    @mod.callback(startswith='number', group=group, is_private=False)
     async def _number(c: C):
 
         # выбераем из колбек даты наше число
@@ -216,13 +216,10 @@ async def main(app: Client, mod: Module):
 
 
     # тут покажу как хендлерить все остальные кнопки
-    @mod.callback(group=group)
+    @mod.callback(group=group, is_private=True)
     async def _all(c: C):
         # проверяем колбек дату вручную
         if c.data == 'back':
-            # как уже показывал ранее, запрещаем чужакам тыкать на наши личные кнопки
-            if c.from_user.id != app.me.id:
-                return await c.answer('Это не твое! Ану не трожь!', True)
 
             # меняем клаву назад, на главные кнопки, опять же, не забываем про екстра дату
             await c.edit_message_reply_markup(
