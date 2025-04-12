@@ -288,7 +288,7 @@ async def main(app: Client, mod: Module):
 
             name = r.document.file_name.rsplit(".", 1)[0]
             path = await r.download(mod.path / r.document.file_name)
-            await dmf(app, mod, msg, msg.edit, path, name)
+            await dmf(app, mod, msg, msg.edit, path, name, Config.DISABLE_MODULE_CHECKING, Config.DISABLE_MODULE_VERSION_CHECKING)
             
         except Exception as e:
             await msg.edit(f'Не удалось загрузить модуль!\n{await paste(format_exc())}')
@@ -302,7 +302,7 @@ async def main(app: Client, mod: Module):
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Вставь ссылку!")
             return
 
-        return await dml(app, mod, msg, msg.edit, url, False)
+        return await dml(app, mod, msg, msg.edit, url, Config.DISABLE_MODULE_CHECKING)
         
 
 
