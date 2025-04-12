@@ -5,8 +5,8 @@ from pyrogram.enums import ClientPlatform
 
 class DefaultConfig:
 
-    VERSION = '2.2.2'
-    VERSION_TUPLE = (2, 2, 2, 'release', 0)
+    VERSION = '2.2.2-1'
+    VERSION_TUPLE = (2, 2, 2, 'release', 1)
 
 
     PHONES: List[str]
@@ -32,6 +32,9 @@ class DefaultConfig:
 
     CHECK_HASH_URL: str = "https://rimtub.pp.ua/api/checkHash/{hash}"
     DML_WHITELIST: List[str] = ['rimtub.pp.ua']
+
+    DISABLE_MODULE_CHECKING: bool = False
+    DISABLE_MODULE_VERSION_CHECKING: bool = False
 
     CHECK_VERSIONS_URL: str = "https://rimtub.pp.ua/api/getAvaiableRimTUBModuleVersions/{module_name}/{module_version}"
 
