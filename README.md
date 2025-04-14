@@ -12,7 +12,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/RimTUB/RimTUB)
 ![GitHub last commit](https://img.shields.io/github/last-commit/RimTUB/RimTUB)
 
-
+## Версия на русском тут -> [тык](README.ru.md)
 
 **RimTUB** — is a powerful and convenient open-source Telegram userbot that's easy to adapt to your needs. Everything necessary is already built-in, and extending its capabilities only requires installing the modules you need. Simple to launch, flexible in configuration, and completely under your control — RimTUB is created to do more with less effort.
 
