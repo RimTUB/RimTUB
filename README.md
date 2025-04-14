@@ -3,9 +3,6 @@
 <a href="https://www.youtube.com/watch?v=nybtOIxlku8"><img alt="Made in Ukraine" src="https://img.shields.io/badge/Ukraine-blue?style=for-the-badge&label=Made%20in&labelColor=yellow&link=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DnybtOIxlku8" height="50px" algin="center"></a>
 
 
-
-
-
 ![UserBot for Telegram](https://img.shields.io/badge/UserBot%20for%20-Telegram-blue)
 ![Works on Windows, Linux, macOS, MavisHost](https://img.shields.io/badge/Works%20on%20-%20Windows%2C%20Linux%2C%20macOS%2C%20MavisHost-green)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
