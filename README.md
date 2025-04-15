@@ -328,7 +328,7 @@ You'll only need to do this once
 
 <a id="UserLAnd"></a>
 
-### 🔹 Step 1. Install Termux
+### 🔹 Step 1. Install UserLAnd
 1. Go to [Play Marker](https://play.google.com/store/apps/details?id=tech.ula) and download **UserLAnd**.
 2. Install it on your device.
 
