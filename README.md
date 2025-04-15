@@ -322,6 +322,114 @@ You'll only need to do this once
 
 </details>
 
+
+<details>
+<summary><strong>UserLAnd (Android)</strong></summary>
+
+<a id="UserLAnd"></a>
+
+### 🔹 Step 1. Install Termux
+1. Go to [Play Marker](https://play.google.com/store/apps/details?id=tech.ula) and download **UserLAnd**.
+2. Install it on your device.
+
+---
+
+### 🔹 Step 2. Download Python and RimTUB
+1. Open **UserLAnd**.
+2. Chose **Debian Termial only**
+3. In Terminal run following commands: (It will take up to 40 minutes)
+```bash
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install -y wget build-essential libssl-dev zlib1g-dev \
+libncurses5-dev libncursesw5-dev libreadline-dev libsqlite3-dev \
+libgdbm-dev libdb5.3-dev libbz2-dev libexpat1-dev liblzma-dev \
+tk-dev uuid-dev libffi-dev
+
+cd /tmp
+wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz
+tar -xvf Python-3.11.9.tgz
+cd Python-3.11.9
+
+./configure --enable-optimizations
+make -j$(nproc)
+sudo make altinstall
+
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/python
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/python3
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/py
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/py3
+
+py -m ensurepip
+
+sudo ln -sf /usr/local/bin/pip3.11 /usr/bin/pip
+sudo ln -sf /usr/local/bin/pip3.11 /usr/bin/pip3
+
+cd ..
+cd ..
+
+sudo apt install -y git
+sudo apt install -y nano
+
+git clone https://github.com/RimTUB/RimTUB
+
+cd RimTUB
+
+py -m venv .venv
+
+source .venv/bin/activate
+
+sudo pip install -r requirements.txt
+
+```
+
+---
+
+### 🔹 Step 3. Create a Telegram bot
+1. Open Telegram and find user [@BotFather](https://t.me/BotFather).  
+2. Click **Start** or type `/start` if the bot is silent.  
+3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
+4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
+5. Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`.
+
+---
+
+### 🔹 Step 4. Configure RimTUB
+1. Open the configuration file `config.yaml` using a text editor, for example, `nano`:
+   ```sh
+   nano config.yaml
+   ```
+2. Insert your data. Example:
+   ```yaml
+   PHONES:
+     - +12345678990 # Your phone number linked to Telegram
+     - +380XXXXXXXX # You can add multiple accounts
+   BOT_TOKEN: 123456:ABC-DEF...  # Token provided by BotFather
+   ```
+3. To save the file in `nano`, press **Ctrl + S**. After that, exit by pressing **Ctrl + X**.
+
+---
+
+### 🔹 Step 5. Launch RimTUB
+1. After all dependencies are installed, launch RimTUB:
+   ```sh
+   python main.py
+   ```
+
+---
+
+### 🔹 Step 6. Confirm login
+1. After launching, the bot will ask you to enter a code.
+2. Telegram will send you an SMS — enter this code in the console.
+3. If you have two-factor authentication enabled (password when logging into Telegram) — enter it as well. You'll only need to do this once.
+
+---
+
+🎉 Done! RimTUB is working on your phone! Hooray!
+
+</details>
+
+
 <details>
 <summary><strong>Termux (Android)</strong></summary>
 
