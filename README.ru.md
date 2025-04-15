@@ -397,6 +397,111 @@
 
 </details>
 
+<details>
+<summary><strong>UserLAnd (Android)</strong></summary>
+
+<a id="UserLAnd"></a>
+
+### 🔹 Шаг 1. Установка UserLAnd
+1. Перейди в [Play Market](https://play.google.com/store/apps/details?id=tech.ula) и скачай **UserLAnd**.
+2. Установи его на своё устройство.
+
+---
+
+### 🔹 Шаг 2. Установка Python и RimTUB
+1. Открой **UserLAnd**.
+2. Выбери **Debian (только терминал)**.
+3. В терминале выполни следующие команды (займёт до 40 минут):
+```bash
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install -y wget build-essential libssl-dev zlib1g-dev \
+libncurses5-dev libncursesw5-dev libreadline-dev libsqlite3-dev \
+libgdbm-dev libdb5.3-dev libbz2-dev libexpat1-dev liblzma-dev \
+tk-dev uuid-dev libffi-dev
+
+cd /tmp
+wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz
+tar -xvf Python-3.11.9.tgz
+cd Python-3.11.9
+
+./configure --enable-optimizations
+make -j$(nproc)
+sudo make altinstall
+
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/python
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/python3
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/py
+sudo ln -sf /usr/local/bin/python3.11 /usr/bin/py3
+
+py -m ensurepip
+
+sudo ln -sf /usr/local/bin/pip3.11 /usr/bin/pip
+sudo ln -sf /usr/local/bin/pip3.11 /usr/bin/pip3
+
+cd ..
+cd ..
+
+sudo apt install -y git
+sudo apt install -y nano
+
+git clone https://github.com/RimTUB/RimTUB
+
+cd RimTUB
+
+py -m venv .venv
+
+source .venv/bin/activate
+
+sudo pip install -r requirements.txt
+```
+
+---
+
+### 🔹 Шаг 3. Создание Telegram-бота
+1. Открой Telegram и найди пользователя [@BotFather](https://t.me/BotFather).  
+2. Нажми **Start** или введи `/start`, если он молчит.  
+3. Введи `/newbot`, задай имя и ссылку для бота (например, `RimTUB_nickname_bot`).  
+4. BotFather пришлёт длинный **токен** — **скопируй его** (он выглядит как `123456:ABC-DEF...`).  
+5. Введи `/setinline`, выбери своего бота и напиши любой текст, например `asdfjwekjdsf`.
+
+---
+
+### 🔹 Шаг 4. Настройка RimTUB
+1. Открой файл конфигурации `config.yaml` через текстовый редактор, например `nano`:
+   ```sh
+   nano config.yaml
+   ```
+2. Вставь свои данные. Пример:
+   ```yaml
+   PHONES:
+     - +12345678990 # Твой номер телефона, привязанный к Telegram
+     - +380XXXXXXXX # Можно добавить несколько аккаунтов
+   BOT_TOKEN: 123456:ABC-DEF...  # Токен, выданный BotFather
+   ```
+3. Чтобы сохранить файл в `nano`, нажми **Ctrl + S**. Затем выйди с помощью **Ctrl + X**.
+
+---
+
+### 🔹 Шаг 5. Запуск RimTUB
+1. После установки всех зависимостей запусти RimTUB:
+   ```sh
+   python main.py
+   ```
+
+---
+
+### 🔹 Шаг 6. Подтверждение входа
+1. После запуска бот попросит ввести код.
+2. Telegram пришлёт тебе СМС — введи этот код в консоли.
+3. Если у тебя включена двухфакторная аутентификация (пароль при входе в Telegram) — введи и его. Делать это нужно только один раз.
+
+---
+
+🎉 Готово! RimTUB работает на твоём телефоне! Ура!
+
+</details>
+
 ---
 
 ## 📚 Документация по модулям: **[docs.rimtub.pp.ua](https://docs.rimtub.pp.ua)**
