@@ -11,9 +11,9 @@
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/RimTUB/RimTUB/total?color=magenta)
 ![GitHub Release](https://img.shields.io/github/v/release/RimTUB/RimTUB)
 ![GitHub last commit](https://img.shields.io/github/last-commit/RimTUB/RimTUB)
-<a href="https://RimTUB.pp.ua">
+<a href="https://RimTUB.pp.ua" target="_blank">
 ![RimTUB.pp.ua Website Temporarily Unavailable](https://img.shields.io/badge/RimTUB.pp.ua%20-%20Временно%20Недоступен-yellow)</a>
-<a href="https://docs.RimTUB.pp.ua">
+<a href="https://docs.RimTUB.pp.ua" target="_blank">
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.RimTUB.pp.ua&up_message=работает!&down_message=не%20работает%28&label=docs.RimTUB.pp.ua)
 </a>
 
