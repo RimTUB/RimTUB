@@ -12,8 +12,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/RimTUB/RimTUB)
 ![GitHub last commit](https://img.shields.io/github/last-commit/RimTUB/RimTUB)
 <a href="https://RimTUB.pp.ua">
-![RimTUB.pp.ua Website Temporarily Unavailable](https://img.shields.io/badge/RimTUB.pp.ua%20-%20Temporarily%20Unavailable-yellow)
-</a>
+![RimTUB.pp.ua Website Temporarily Unavailable](https://img.shields.io/badge/RimTUB.pp.ua%20-%20Temporarily%20Unavailable-yellow)</a>
 <a href="https://docs.RimTUB.pp.ua">
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.RimTUB.pp.ua&up_message=works!&down_message=doesn't%20work%28&label=docs.RimTUB.pp.ua)
 </a>
