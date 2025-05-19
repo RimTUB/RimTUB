@@ -109,7 +109,7 @@ Here you can:
 ### 🔹 Step 4. Install Python
 1. Go to [python.org](https://www.python.org/).  
 2. Hover over "Downloads" and select **Windows**.  
-3. Click **"Download Python 3.11.x"**. (x - any number - it doesn't really matter) 
+3. Click **"Download Python 3.11.9"**. 
 4. When the installer downloads — **MAKE SURE to check "Add Python to PATH"**, then click **"Install Now"**.  
 5. Wait for the installation to complete and close the window.
 
