@@ -9,4 +9,4 @@ TgCrypto==1.2.5
 plyer==2.1.0
 pyyaml==6.0.2
 aiofiles==23.2.1
-requests==2.32.3
+requests==2.32.4
