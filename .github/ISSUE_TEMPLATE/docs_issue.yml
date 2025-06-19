@@ -1,7 +1,7 @@
 name: 📖 Docs Issue / Ошибка в документации
 description: Problem in docs? Report here / Ошибка в документации Docusaurus
 title: "[DOCS] "
-labels: [docs]
+labels: [documentation, bug]
 body:
   - type: markdown
     attributes:
