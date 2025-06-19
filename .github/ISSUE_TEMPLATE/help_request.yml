@@ -1,7 +1,7 @@
 name: 🆘 Help Request / Запрос помощи
 description: Need help or stuck with something? / Нужна помощь? Опишите ситуацию
 title: "[HELP] "
-labels: [help]
+labels: [help wanted]
 body:
 body:
   - type: markdown
