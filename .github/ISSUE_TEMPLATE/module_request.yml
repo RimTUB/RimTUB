@@ -1,7 +1,7 @@
 name: 📦 Module Request / Запрос модуля
 description: Suggest a new module / Предложите новый модуль
 title: "[MODULE] "
-labels: [enhancement]
+labels: [enhancement, module]
 body:
   - type: markdown
     attributes:
