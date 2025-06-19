@@ -2,6 +2,7 @@ name: 💀 Bug Report / Сообщить о баге
 description: Found a bug in RimTUB? Describe it here / Нашли баг? Опишите его здесь
 title: "[BUG] "
 labels: [bug]
+type: bug
 body:
   - type: markdown
     attributes:
