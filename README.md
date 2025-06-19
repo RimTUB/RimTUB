@@ -1,6 +1,6 @@
 # RimTUB - RimMirK's Telegram User Bot
 
-![Banner]()
+![Banner](.github/banner.png)
 
 <a href="https://www.youtube.com/watch?v=nybtOIxlku8"><img alt="Made in Ukraine" src="https://img.shields.io/badge/Ukraine-blue?style=for-the-badge&label=Made%20in&labelColor=yellow&link=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DnybtOIxlku8" height="50px" algin="center"></a>
 
