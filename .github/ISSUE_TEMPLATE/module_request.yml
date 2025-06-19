@@ -1,20 +1,48 @@
-name: 📦 Module request / Запрос модуля
-description: Suggest a new module / Предложите идею модуля
-labels: [enhancement, module]
+name: 📦 Module Request / Запрос модуля
+description: Suggest a new module / Предложите новый модуль
+title: "[MODULE] "
+labels: [enhancement]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **If you don't know something — just put `-` and explain in the comments.**  
+        **Если вы чего-то не знаете — поставьте прочерк `-` и напишите в комментарии.**
+
+        🆔 _How to get versions / Как узнать версии:_
+        - RimTUB: в Telegram отправьте `.me` в любой чат / on Telegram send `.me` to any chat
+        - Python: откройте терминал и напишите `python -V` / open a Terminal and type `python -V`
+        
+        💭 _Где взять логи? / Where I can get logs?:_
+        просто приложи файл `logs/last_run.log` / just attach `logs/last_run.log` file
+
   - type: textarea
     id: description
     attributes:
-      label: Detailed description / Подробное описание
+      label: Module description / Описание модуля
+      description: Describe what the module should do with examples / Подробно опишите, что должен делать модуль
     validations:
       required: true
 
-  - type: textarea
+  - type: input
     id: reference
     attributes:
-      label: Reference (if any) / Схожие реализации в других юб (если есть)
+      label: Reference (if any) / Референс (если есть)
+      placeholder: "Link to code/repo/etc / Ссылка на код/репозиторий/.."
+    validations:
+      required: false
 
   - type: textarea
     id: comment
     attributes:
-      label: Comment / Дополнение
+      label: Additional info / Дополнительная информация 
+    validations:
+      required: false
+
+  - type: input
+    id: contact
+    attributes:
+      label: Telegram contact (optional) / Контакт в Telegram (необязательно)
+      placeholder: "@yourusername"
+    validations:
+      required: false
