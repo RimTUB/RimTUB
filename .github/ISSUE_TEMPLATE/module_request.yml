@@ -1,0 +1,20 @@
+name: 📦 Module request / Запрос модуля
+description: Suggest a new module / Предложите идею модуля
+labels: [enhancement, module]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Detailed description / Подробное описание
+    validations:
+      required: true
+
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference (if any) / Схожие реализации в других юб (если есть)
+
+  - type: textarea
+    id: comment
+    attributes:
+      label: Comment / Дополнение
