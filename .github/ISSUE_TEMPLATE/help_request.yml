@@ -1,0 +1,70 @@
+name: 🆘 Help Request / Запрос помощи
+description: Need help or stuck with something? / Нужна помощь? Опишите ситуацию
+title: "[HELP] "
+labels: [help]
+body:
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **If you don't know something — just put `-` and explain in the comments.**  
+        **Если вы чего-то не знаете — поставьте прочерк `-` и напишите в комментарии.**
+
+        🆔 _How to get versions / Как узнать версии:_
+        - RimTUB: в Telegram отправьте `.me` в любой чат / on Telegram send `.me` to any chat
+        - Python: откройте терминал и напишите `python -V` / open a Terminal and type `python -V`
+        
+        💭 _Где взять логи? / Where I can get logs?:_
+        просто приложи файл `logs/last_run.log` / just attach `logs/last_run.log` file
+
+  - type: input
+    id: rimtub
+    attributes:
+      label: RimTUB version / Версия RimTUB
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Platform / Платформа
+      placeholder: "e.g. Windows, Termux"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Логи
+      description: Attach logs (preferably `logs/last_run.log`) / Приложите `logs/last_run.log`
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem? / В чём проблема?
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried? / Что уже пробовали?
+    validations:
+      required: false
+
+  - type: textarea
+    id: comment
+    attributes:
+      label: Additional info / Дополнительно
+    validations:
+      required: false
+
+  - type: input
+    id: contact
+    attributes:
+      label: Telegram contact (optional) / Контакт в Telegram (необязательно)
+      placeholder: "@yourusername"
+    validations:
+      required: false
