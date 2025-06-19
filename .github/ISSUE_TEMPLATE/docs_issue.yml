@@ -6,10 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        **‼️ Important: this only applies to the documentation on the (https://docs
-.rimtub.pp.ua)[docs.RimTUB.pp.ua] website!**
-        **Важно! Это касается только документации на сайте (https://docs
-.rimtub.pp.ua)[docs.RimTUB.pp.ua]**
+        **‼️ Important: this only applies to the documentation on the (https://docs.rimtub.pp.ua)[docs.RimTUB.pp.ua] website!**
+        **Важно! Это касается только документации на сайте (https://docs.rimtub.pp.ua)[docs.RimTUB.pp.ua]**
 
       
         **If you don't know something — just put `-` and explain in the comments.**  
