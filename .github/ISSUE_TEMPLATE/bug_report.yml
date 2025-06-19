@@ -1,0 +1,54 @@
+name: Bug report / Отчёт о баге
+description: Describe a bug in RimTUB / Опишите ошибку в RimTUB
+labels: [bug]
+body:
+  - type: input
+    id: rimtub_version
+    attributes:
+      label: RimTUB version / Версия RimTUB
+    validations:
+      required: true
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version / Версия Python
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Platform / Платформа (Linux/Windows/...)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / Как воспроизвести
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior / Что должно быть
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (attach or paste) / Логи (logs/last_run.log)
+    validations:
+      required: false
+
+  - type: textarea
+    id: comment
+    attributes:
+      label: Extra info / Дополнение
+      
