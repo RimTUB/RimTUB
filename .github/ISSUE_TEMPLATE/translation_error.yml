@@ -1,7 +1,7 @@
 name: 🌐 Translation Error / Ошибка в переводе
 description: Report a translation problem / Сообщите об ошибке в переводе
 title: "[TRANSLATION] "
-labels: [translation]
+labels: [translation, bug]
 body:
   - type: markdown
     attributes:
