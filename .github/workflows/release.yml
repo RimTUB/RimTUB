@@ -121,5 +121,5 @@ jobs:
                '{version:$v,update_type:$t,changelog:$c}' \
         | curl -X POST "$API_URL/queue_release" \
                 -H "Content-Type: application/json" \
-                -H "x-api-token: $API_TOKEN" \
+                -H "Authorization: Bearer $API_TOKEN" \
                 -d @-
