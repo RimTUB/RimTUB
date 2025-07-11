@@ -22,7 +22,7 @@ env:
   API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}      # x‑api‑token
 
 jobs:
-  build‑release:
+  build-release:
     runs-on: ubuntu-latest
 
     steps:
