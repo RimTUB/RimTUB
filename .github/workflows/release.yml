@@ -97,10 +97,13 @@ jobs:
         name: "RimTUB ${{ github.event.inputs.version }}"
         tag_name: ${{ github.event.inputs.version }}
         body: |
-          ## ChangeLog:
+          ### ChangeLog:
           ${{ steps.changelog.outputs.text }}
 
           ${{ steps.link.outputs.url }}
+
+          ### Installation instructions
+          [Click](https://github.com/RimTUB/RimTUB?tab=readme-ov-file#-installation)
         files: |
           RimTUB_${{ github.event.inputs.version }}.zip
         draft: false
