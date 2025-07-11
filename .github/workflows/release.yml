@@ -1,98 +1,112 @@
-name: Manual Release + API Sync
+# .github/workflows/release.yml
+name: RimTUB Release
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version (e.g. 2.2.2-1)"
+        description: "Tag & archive name (e.g. dev‑1.2.3‑4)"
         required: true
       version_tuple:
-        description: "Release version tuple (e.g. (2, 2, 2, 'release', 1))"
+        description: "Tuple (e.g. \"(1, 2, 3, 'dev', 4)\")"
+        required: true
+      version_type:
+        description: "Release/Dev/Test/Beta/Alpha/Pre"
+        required: true
+      update_type:
+        description: "Update/Fix/Patch"
+        required: true
+
+env:
+  API_URL: ${{ secrets.RELEASE_API_URL }}          # e.g. https://example.com/queue_release
+  API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}      # x‑api‑token
 
 jobs:
-  release:
+  build‑release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0          # need full history for previous tag lookup
 
-      - name: Update VERSION & VERSION_TUPLE in utils/config/default_config.py
-        env:
-          VERSION: ${{ github.event.inputs.version }}               # e.g. 2.2.2-1
-          VERSION_TUPLE: ${{ github.event.inputs.version_tuple }}   # e.g. (2, 2, 2, 'release', 1)
-        run: |
-          python - <<'PY'
-          import os, re, pathlib
-          
-          file = "utils/config/default_config.py"
-          version = os.environ["VERSION"]
-          tuple_val = os.environ["VERSION_TUPLE"]
-          
-          text = pathlib.Path(file).read_text()
-          
-          text = re.sub(r'^([ \t]*)VERSION\s*=.*$',         r"\1VERSION = '%s'" % version,       text, flags=re.M)
-          text = re.sub(r'^([ \t]*)VERSION_TUPLE\s*=.*$',   r"\1VERSION_TUPLE = %s" % tuple_val, text, flags=re.M)
-          
-          pathlib.Path(file).write_text(text)
-          PY
+    - name: Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-          # ── 3. коммитим и пушим ────────────────────────────────────────────
-          git config user.name  "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git add utils/config/default_config.py
-          git commit -m "🔖 Bump version to $VERSION"
-          git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_PAT }}@github.com/${{ github.repository }}
-          git push
-      
+    # 1. patch utils/config/default_config.py
+    - name: Bump version in source
+      run: |
+        file="utils/config/default_config.py"
+        sed -i -E "s/^VERSION = .*/VERSION = '${{ github.event.inputs.version }}'/" "$file"
+        sed -i -E "s/^VERSION_TUPLE = .*/VERSION_TUPLE = ${{ github.event.inputs.version_tuple }}/" "$file"
+        git diff --color
 
-      - name: Create ZIP archive
-        run: |
-          zip -r "RimTUB_${{ github.event.inputs.version }}.zip" . -x ".git/*"
+    # 2. get previous tag
+    - id: prev
+      run: echo "tag=$(git describe --tags --abbrev=0 || echo none)" >> $GITHUB_OUTPUT
 
-      - name: Get previous tag
-        id: prevtag
-        run: |
-          git fetch --tags
-          PREV=$(git tag --sort=-creatordate | grep -v "${{ github.event.inputs.version }}" | head -n 1)
-          echo "prev=$PREV" >> $GITHUB_OUTPUT
+    # 3. zip
+    - name: Build archive
+      run: |
+        zip -r "RimTUB_${{ github.event.inputs.version }}.zip" . -x '.git*' 'tests/*'
 
-      - name: Read changelog and build final body
-        id: changelog
-        run: |
-          MANUAL_LOG_FILE=".github/RELEASE_LOG.md"
-          if [ ! -f "$MANUAL_LOG_FILE" ]; then
-            echo "❌ $MANUAL_LOG_FILE not found"
-            exit 1
-          fi
+    # 4. grab changelog text
+    - id: changelog
+      run: |
+        log=$(cat .github/RELEASE_LOG.md)
+        echo 'text<<EOF' >> $GITHUB_OUTPUT
+        echo "$log"       >> $GITHUB_OUTPUT
+        echo 'EOF'        >> $GITHUB_OUTPUT
 
-          MANUAL_LOG=$(cat "$MANUAL_LOG_FILE")
-          LINK="Full Changelog: [${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }}](https://github.com/${{ github.repository }}/compare/${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }})"
+    # 5. full changelog link
+    - id: link
+      run: |
+        prev="${{ steps.prev.outputs.tag }}"
+        new="${{ github.event.inputs.version }}"
+        if [ "$prev" = "none" ]; then
+          url=""
+        else
+          url="[Full ChangeLog: $prev...$new](https://github.com/${{ github.repository }}/compare/$prev...$new)"
+        fi
+        echo "url=$url" >> $GITHUB_OUTPUT
 
-          FINAL_LOG="# RimTUB github.event.inputs.version\n\n## ChangeLog:\n${MANUAL_LOG}\n\n${LINK}"
+    # 6. create Git tag & push
+    - name: Commit + tag
+      run: |
+        git config user.name  github-actions
+        git config user.email github-actions@users.noreply.github.com
+        git commit -am "Release ${{ github.event.inputs.version }}"
+        git tag "${{ github.event.inputs.version }}"
+        git push --follow-tags
 
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$FINAL_LOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+    # 7. GitHub Release
+    - name: Create release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: "RimTUB ${{ github.event.inputs.version }}"
+        tag_name: ${{ github.event.inputs.version }}
+        body: |
+          ## ChangeLog:
+          ${{ steps.changelog.outputs.text }}
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.version }}
-          name: ${{ github.event.inputs.version }}
-          body: ${{ steps.changelog.outputs.log }}
-          files: RimTUB_${{ github.event.inputs.version }}.zip
+          ${{ steps.link.outputs.url }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: |
+          RimTUB_${{ github.event.inputs.version }}.zip
 
-      - name: Send release info to API
-        env:
-          API_URL: ${{ secrets.RELEASE_API_URL }}
-          API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}
-        run: |
-          jq -n --arg version "${{ github.event.inputs.version }}" \
-                --arg log "${{ steps.changelog.outputs.log }}" \
-                '{version: $version, manual_log: $log}' > payload.json
-
-          curl -X POST "$API_URL" \
-            -H "Authorization: Bearer $API_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d @payload.json
+    # 8. POST to external API
+    - name: Notify Release API
+      run: |
+        jq -n --arg v "${{ github.event.inputs.version }}" \
+               --arg t "${{ github.event.inputs.update_type }}" \
+               --arg c "${{ steps.changelog.outputs.text }}" \
+               '{version:$v,update_type:$t,changelog:$c}' \
+        | curl -X POST "$API_URL/queue_release" \
+                -H "Content-Type: application/json" \
+                -H "x-api-token: $API_TOKEN" \
+                -d @-
