@@ -15,6 +15,14 @@ on:
       update_type:
         description: "Update/Fix/Patch"
         required: true
+      is_latest:
+        description: "Mark this release as latest?"
+        required: false
+        default: "true"
+      send_to_api:
+        description: "Send release to external API?"
+        required: false
+        default: "true"
 
 env:
   API_URL: ${{ secrets.RELEASE_API_URL }}
@@ -75,7 +83,6 @@ jobs:
 
         git add utils/config/default_config.py
 
-        # Только если есть изменения — коммитим
         if git diff --cached --quiet; then
           echo "⏭️ No changes to commit"
         else
@@ -83,7 +90,6 @@ jobs:
           git tag "${{ github.event.inputs.version }}"
           git push --follow-tags
         fi
-
 
     - name: Create release
       uses: softprops/action-gh-release@v2
@@ -97,11 +103,14 @@ jobs:
           ${{ steps.link.outputs.url }}
         files: |
           RimTUB_${{ github.event.inputs.version }}.zip
+        draft: false
+        prerelease: ${{ github.event.inputs.version_type != 'Release' }}
+        make_latest: ${{ github.event.inputs.is_latest == 'true' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-
     - name: Notify Release API
+      if: ${{ github.event.inputs.send_to_api == 'true' }}
       run: |
         jq -n --arg v "${{ github.event.inputs.version }}" \
                --arg t "${{ github.event.inputs.update_type }}" \
