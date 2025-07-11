@@ -1,13 +1,10 @@
-name: RimTUB Manual GitHub Release + Queue to API
+name: Manual Release + API Sync
 
 on:
   workflow_dispatch:
     inputs:
       version:
         description: "Release version (e.g. 2.2.2-1)"
-        required: true
-      manual_log:
-        description: "Manual changelog (free text)"
         required: true
 
 jobs:
@@ -29,21 +26,30 @@ jobs:
           PREV=$(git tag --sort=-creatordate | grep -v "${{ github.event.inputs.version }}" | head -n 1)
           echo "prev=$PREV" >> $GITHUB_OUTPUT
 
-      - name: Build full changelog link
+      - name: Read changelog and build final body
         id: changelog
         run: |
-          LINK="Full Changelog: ${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }} / https://github.com/${{ github.repository }}/compare/${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }}"
-          echo "link=$LINK" >> $GITHUB_OUTPUT
+          MANUAL_LOG_FILE=".github/RELEASE_LOG.md"
+          if [ ! -f "$MANUAL_LOG_FILE" ]; then
+            echo "❌ $MANUAL_LOG_FILE not found"
+            exit 1
+          fi
+
+          MANUAL_LOG=$(cat "$MANUAL_LOG_FILE")
+          LINK="Full Changelog: [${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }}](https://github.com/${{ github.repository }}/compare/${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }})"
+
+          FINAL_LOG="# RimTUB github.event.inputs.version\n\n## ChangeLog:\n${MANUAL_LOG}\n\n${LINK}"
+
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$FINAL_LOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}
           name: ${{ github.event.inputs.version }}
-          body: |
-            ${{ github.event.inputs.manual_log }}
-
-            ${{ steps.changelog.outputs.link }}
+          body: ${{ steps.changelog.outputs.log }}
           files: RimTUB_${{ github.event.inputs.version }}.zip
 
       - name: Send release info to API
@@ -52,7 +58,7 @@ jobs:
           API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}
         run: |
           jq -n --arg version "${{ github.event.inputs.version }}" \
-                --arg log "${{ github.event.inputs.manual_log }}\n\n${{ steps.changelog.outputs.link }}" \
+                --arg log "${{ steps.changelog.outputs.log }}" \
                 '{version: $version, manual_log: $log}' > payload.json
 
           curl -X POST "$API_URL" \
