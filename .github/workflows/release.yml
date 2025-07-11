@@ -98,7 +98,8 @@ jobs:
         files: |
           RimTUB_${{ github.event.inputs.version }}.zip
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
 
     - name: Notify Release API
       run: |
