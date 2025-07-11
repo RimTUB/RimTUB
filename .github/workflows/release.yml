@@ -1,0 +1,61 @@
+name: RimTUB Manual GitHub Release + Queue to API
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. 2.2.2-1)"
+        required: true
+      manual_log:
+        description: "Manual changelog (free text)"
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create ZIP archive
+        run: |
+          zip -r "RimTUB_${{ github.event.inputs.version }}.zip" . -x ".git/*"
+
+      - name: Get previous tag
+        id: prevtag
+        run: |
+          git fetch --tags
+          PREV=$(git tag --sort=-creatordate | grep -v "${{ github.event.inputs.version }}" | head -n 1)
+          echo "prev=$PREV" >> $GITHUB_OUTPUT
+
+      - name: Build full changelog link
+        id: changelog
+        run: |
+          LINK="Full Changelog: ${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }} / https://github.com/${{ github.repository }}/compare/${{ steps.prevtag.outputs.prev }}...${{ github.event.inputs.version }}"
+          echo "link=$LINK" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          body: |
+            ${{ github.event.inputs.manual_log }}
+
+            ${{ steps.changelog.outputs.link }}
+          files: RimTUB_${{ github.event.inputs.version }}.zip
+
+      - name: Send release info to API
+        env:
+          API_URL: ${{ secrets.RELEASE_API_URL }}
+          API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}
+        run: |
+          jq -n --arg version "${{ github.event.inputs.version }}" \
+                --arg log "${{ github.event.inputs.manual_log }}\n\n${{ steps.changelog.outputs.link }}" \
+                '{version: $version, manual_log: $log}' > payload.json
+
+          curl -X POST "$API_URL" \
+            -H "Authorization: Bearer $API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d @payload.json
