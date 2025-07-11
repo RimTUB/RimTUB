@@ -15,6 +15,42 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Update VERSION & VERSION_TUPLE in utils/config/default_config.py
+        env:
+          VERSION: ${{ github.event.inputs.version }}          # e.g. 2.2.2-1
+        run: |
+          # ── 1. разбираем версию ─────────────────────────────────────────────
+          BASE=${VERSION%%-*}          # 2.2.2
+          POST=${VERSION#*-}           # 1   (если нет "-", будет вся строка)
+          [ "$BASE" = "$VERSION" ] && POST=0   # если пост‑части нет
+      
+          IFS='.' read -r MAJ MIN PATCH <<< "$BASE"
+          TUPLE="($MAJ, $MIN, $PATCH, 'release', $POST)"
+          export TUPLE
+      
+          # ── 2. патчим файл (сохраняем ведущие пробелы/табы) ────────────────
+          python - <<'PY'
+          import os, re, pathlib
+          file = "utils/config/default_config.py"
+          version = os.environ["VERSION"]
+          tuple_val = os.environ["TUPLE"]
+          
+          src = pathlib.Path(file).read_text()
+          
+          src = re.sub(r'^[ \t]*VERSION\s*=.*$',          f"VERSION = '{version}'",     src, flags=re.M)
+          src = re.sub(r'^[ \t]*VERSION_TUPLE\s*=.*$',    f"VERSION_TUPLE = {tuple_val}", src, flags=re.M)
+          
+          pathlib.Path(file).write_text(src)
+          PY
+      
+          # ── 3. коммитим и пушим ────────────────────────────────────────────
+          git config user.name  "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add utils/config/default_config.py
+          git commit -m "🔖 Bump version to $VERSION"
+          git push
+      
+
       - name: Create ZIP archive
         run: |
           zip -r "RimTUB_${{ github.event.inputs.version }}.zip" . -x ".git/*"
