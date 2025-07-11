@@ -93,11 +93,11 @@ jobs:
           ${{ steps.changelog.outputs.text }}
 
           ${{ steps.link.outputs.url }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
         files: |
           RimTUB_${{ github.event.inputs.version }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # with:
 
     # 8. POST to external API
     - name: Notify Release API
