@@ -1,6 +1,1 @@
-test
-test2
-**test3**
-- 1
-- 2
-- 3
+Testing automatic releases with __GitHub Actions__. If you're reading this, it means everything is **working**!
