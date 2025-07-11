@@ -1,11 +1,10 @@
-# .github/workflows/release.yml
-name: RimTUB Release
+name: RimTUB Release
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Tag & archive name (e.g. dev‑1.2.3‑4)"
+        description: "Tag & archive name (e.g. dev-1.2.3-4)"
         required: true
       version_tuple:
         description: "Tuple (e.g. \"(1, 2, 3, 'dev', 4)\")"
@@ -18,25 +17,24 @@ on:
         required: true
 
 env:
-  API_URL: ${{ secrets.RELEASE_API_URL }}          # e.g. https://example.com/queue_release
-  API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}      # x‑api‑token
+  API_URL: ${{ secrets.RELEASE_API_URL }}
+  API_TOKEN: ${{ secrets.RELEASE_API_TOKEN }}
 
 jobs:
-  build-release:
+  build_release:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0          # need full history for previous tag lookup
+        fetch-depth: 0
 
-    - name: Python 3.11
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
-    # 1. patch utils/config/default_config.py
     - name: Bump version in source
       run: |
         file="utils/config/default_config.py"
@@ -44,16 +42,14 @@ jobs:
         sed -i -E "s/^VERSION_TUPLE = .*/VERSION_TUPLE = ${{ github.event.inputs.version_tuple }}/" "$file"
         git diff --color
 
-    # 2. get previous tag
     - id: prev
-      run: echo "tag=$(git describe --tags --abbrev=0 || echo none)" >> $GITHUB_OUTPUT
+      run: |
+        echo "tag=$(git describe --tags --abbrev=0 || echo none)" >> $GITHUB_OUTPUT
 
-    # 3. zip
     - name: Build archive
       run: |
         zip -r "RimTUB_${{ github.event.inputs.version }}.zip" . -x '.git*' 'tests/*'
 
-    # 4. grab changelog text
     - id: changelog
       run: |
         log=$(cat .github/RELEASE_LOG.md)
@@ -61,7 +57,6 @@ jobs:
         echo "$log"       >> $GITHUB_OUTPUT
         echo 'EOF'        >> $GITHUB_OUTPUT
 
-    # 5. full changelog link
     - id: link
       run: |
         prev="${{ steps.prev.outputs.tag }}"
@@ -73,16 +68,15 @@ jobs:
         fi
         echo "url=$url" >> $GITHUB_OUTPUT
 
-    # 6. create Git tag & push
     - name: Commit + tag
       run: |
         git config user.name  github-actions
         git config user.email github-actions@users.noreply.github.com
-        git commit -am "Release ${{ github.event.inputs.version }}"
+        git add utils/config/default_config.py
+        git commit -m "Release ${{ github.event.inputs.version }}"
         git tag "${{ github.event.inputs.version }}"
         git push --follow-tags
 
-    # 7. GitHub Release
     - name: Create release
       uses: softprops/action-gh-release@v2
       with:
@@ -97,9 +91,7 @@ jobs:
           RimTUB_${{ github.event.inputs.version }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # with:
 
-    # 8. POST to external API
     - name: Notify Release API
       run: |
         jq -n --arg v "${{ github.event.inputs.version }}" \
