@@ -72,10 +72,18 @@ jobs:
       run: |
         git config user.name  github-actions
         git config user.email github-actions@users.noreply.github.com
+
         git add utils/config/default_config.py
-        git commit -m "Release ${{ github.event.inputs.version }}"
-        git tag "${{ github.event.inputs.version }}"
-        git push --follow-tags
+
+        # Только если есть изменения — коммитим
+        if git diff --cached --quiet; then
+          echo "⏭️ No changes to commit"
+        else
+          git commit -m "Release ${{ github.event.inputs.version }}"
+          git tag "${{ github.event.inputs.version }}"
+          git push --follow-tags
+        fi
+
 
     - name: Create release
       uses: softprops/action-gh-release@v2
