@@ -6,6 +6,8 @@ on:
       version:
         description: "Release version (e.g. 2.2.2-1)"
         required: true
+      version_tuple:
+        description: "Release version tuple (e.g. (2, 2, 2, 'release', 1))"
 
 jobs:
   release:
@@ -17,32 +19,24 @@ jobs:
 
       - name: Update VERSION & VERSION_TUPLE in utils/config/default_config.py
         env:
-          VERSION: ${{ github.event.inputs.version }}          # e.g. 2.2.2-1
+          VERSION: ${{ github.event.inputs.version }}               # e.g. 2.2.2-1
+          VERSION_TUPLE: ${{ github.event.inputs.version_tuple }}   # e.g. (2, 2, 2, 'release', 1)
         run: |
-          # ── 1. разбираем версию ─────────────────────────────────────────────
-          BASE=${VERSION%%-*}          # 2.2.2
-          POST=${VERSION#*-}           # 1   (если нет "-", будет вся строка)
-          [ "$BASE" = "$VERSION" ] && POST=0   # если пост‑части нет
-      
-          IFS='.' read -r MAJ MIN PATCH <<< "$BASE"
-          TUPLE="($MAJ, $MIN, $PATCH, 'release', $POST)"
-          export TUPLE
-      
-          # ── 2. патчим файл (сохраняем ведущие пробелы/табы) ────────────────
           python - <<'PY'
           import os, re, pathlib
+          
           file = "utils/config/default_config.py"
           version = os.environ["VERSION"]
-          tuple_val = os.environ["TUPLE"]
+          tuple_val = os.environ["VERSION_TUPLE"]
           
-          src = pathlib.Path(file).read_text()
+          text = pathlib.Path(file).read_text()
           
-          src = re.sub(r'^[ \t]*VERSION\s*=.*$',          f"VERSION = '{version}'",     src, flags=re.M)
-          src = re.sub(r'^[ \t]*VERSION_TUPLE\s*=.*$',    f"VERSION_TUPLE = {tuple_val}", src, flags=re.M)
+          text = re.sub(r'^([ \t]*)VERSION\s*=.*$',         r"\1VERSION = '%s'" % version,       text, flags=re.M)
+          text = re.sub(r'^([ \t]*)VERSION_TUPLE\s*=.*$',   r"\1VERSION_TUPLE = %s" % tuple_val, text, flags=re.M)
           
-          pathlib.Path(file).write_text(src)
+          pathlib.Path(file).write_text(text)
           PY
-      
+
           # ── 3. коммитим и пушим ────────────────────────────────────────────
           git config user.name  "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
