@@ -370,7 +370,7 @@ class ModifyPyrogramClient(Client):
             try:
                 await coro
             except asyncio.CancelledError:
-                logger.info(f"Task cancelled (coro {coro!r}, module {module_name)")
+                logger.info(f"Task cancelled (coro {coro!r}, module {module_name}")
             except:
                 logger.error(f'Error in {module_name} module', exc_info=True)
         module_name = module_name.removeprefix('plugins.')
