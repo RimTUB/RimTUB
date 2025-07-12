@@ -367,7 +367,10 @@ async def main(app: Client, mod: Module):
 
     @cmd('relm')
     async def _relm(app: Client, msg):
-        module_name = msg.text.split(maxsplit=1)[1]
+        try:
+            module_name = msg.text.split(maxsplit=1)[1]
+        except IndexError:
+            await msg.edit("Введи название модуля!")
         try:
             module_path = find_directory(module_name, 'plugins', 1)
             if not module_path:
