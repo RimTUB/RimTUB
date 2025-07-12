@@ -102,9 +102,10 @@ jobs:
 
           ${{ steps.link.outputs.url }}
 
-          ### Installation instructions
-          [Click](https://github.com/RimTUB/RimTUB?tab=readme-ov-file#-installation)
-        files: |
+          
+          **Installation instructions:** [Click](https://github.com/RimTUB/RimTUB?tab=readme-ov-file#-installation)
+
+          files: |
           RimTUB_${{ github.event.inputs.version }}.zip
         draft: false
         prerelease: ${{ github.event.inputs.version_type != 'Release' }}
