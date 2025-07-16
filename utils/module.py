@@ -237,8 +237,13 @@ class Module(SingletonByAttribute):
 
     def callback(
         self, callback_data='', startswith='', group=None,
-        is_private=True, allowed_ids: List[int] = None, message='Это не твоя кнопка!', show_alert=True
+        is_private=True, allowed_ids: List[int] = None, message=core_tr('not_your_button'), show_alert=True
     ):
+        
+        self.st.setdefault('__core__', {})
+        self.st['__core__']['message'] = "DO NOT DELETE KEY `__core__`, IT IS USED FOR CALLBACK HANDLERS!!"
+        self.st['__core__'].setdefault(f'{callback_data!r}_{startswith!r}', {})
+        self.st['__core__'][f'{callback_data!r}_{startswith!r}']['allowed_ids'] = allowed_ids
         
         def _flt(data):
             module_name, _, moddata = data.split(':', 2)
@@ -252,10 +257,9 @@ class Module(SingletonByAttribute):
                 return True
             return False
 
-        if is_private and not allowed_ids:
-            allowed_ids = [self.client.me.id]
             
         def decorator(func):
+
 
             @self.client.bot.on_callback_query(
                     filters.create(lambda _, __, c: _flt(c.data)),
@@ -263,7 +267,13 @@ class Module(SingletonByAttribute):
             )
             async def __wrapper(c, *args, **kwargs):
                 try:
-                    if is_private:
+
+                    allowed_ids = self.st.get('__core__', {}).get(f'{callback_data!r}_{startswith!r}', {}).get('allowed_ids', [])
+
+                    if is_private and not allowed_ids:
+                        allowed_ids = [client.me.id for client in clients]
+
+                    if allowed_ids:
                         if c.from_user.id not in allowed_ids:
                             await c.answer(message, show_alert)
                             return None
@@ -282,13 +292,13 @@ class Module(SingletonByAttribute):
                         await func(mc, *args, **kwargs)
                         await self.client.bot.answer_callback_query(c.id)
                     except:
-                        self.logger.error(f"Error in callback ({callback_data=!r}, {startswith=!r}, {group=!r}):", exc_info=True)
+                        self.logger.error(f"{core_tr('error_in_callback')} ({callback_data=!r}, {startswith=!r}, {group=!r}):", exc_info=True)
                 except FileNotFoundError as e:
-                    self.logger.error(f"Pickle storage file not found!: {e.path}")
-                    await self.client.bot.answer_callback_query(c.id, 'Произошла ошибка! Подробности в консоли', True)
+                    self.logger.error(core_tr('pickle_not_found').format(path=e.path))
+                    await self.client.bot.answer_callback_query(c.id, core_tr('error_in_console'), True)
                 except:
-                    self.logger.error(f'Error in callback ({callback_data=!r}, {startswith=!r}):', exc_info=True)
-                    await self.client.bot.answer_callback_query(c.id, 'Произошла ошибка! Подробности в консоли', True)
+                    self.logger.error(f"{core_tr('error_in_callback')} ({callback_data=!r}, {startswith=!r}):", exc_info=True)
+                    await self.client.bot.answer_callback_query(c.id, core_tr('error_in_console'), True)
             return __wrapper
         
         return decorator
