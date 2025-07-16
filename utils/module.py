@@ -237,7 +237,7 @@ class Module(SingletonByAttribute):
 
     def callback(
         self, callback_data='', startswith='', group=None,
-        is_private=True, allowed_ids: List[int] = None, message=core_tr('not_your_button'), show_alert=True
+        is_private=True, allowed_ids: List[int] = None, message="Это не твоя кнопка!", show_alert=True
     ):
         
         self.st.setdefault('__core__', {})
@@ -292,13 +292,13 @@ class Module(SingletonByAttribute):
                         await func(mc, *args, **kwargs)
                         await self.client.bot.answer_callback_query(c.id)
                     except:
-                        self.logger.error(f"{core_tr('error_in_callback')} ({callback_data=!r}, {startswith=!r}, {group=!r}):", exc_info=True)
+                        self.logger.error(f"Error in callback ({callback_data=!r}, {startswith=!r}, {group=!r}):", exc_info=True)
                 except FileNotFoundError as e:
-                    self.logger.error(core_tr('pickle_not_found').format(path=e.path))
-                    await self.client.bot.answer_callback_query(c.id, core_tr('error_in_console'), True)
+                    self.logger.error(f"Pickle storage file not found!: {e.path}")
+                    await self.client.bot.answer_callback_query(c.id, 'Произошла ошибка! Подробности в консоли', True)
                 except:
-                    self.logger.error(f"{core_tr('error_in_callback')} ({callback_data=!r}, {startswith=!r}):", exc_info=True)
-                    await self.client.bot.answer_callback_query(c.id, core_tr('error_in_console'), True)
+                    self.logger.error(f'Error in callback ({callback_data=!r}, {startswith=!r}):', exc_info=True)
+                    await self.client.bot.answer_callback_query(c.id, 'Произошла ошибка! Подробности в консоли', True)
             return __wrapper
         
         return decorator
