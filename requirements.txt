@@ -3,7 +3,7 @@ aiosqlite==0.19.0
 APScheduler==3.10.4
 coloredlogs==15.0.1
 playsound==1.2.2
-https://github.com/KurimuzonAkuma/pyrogram/archive/dev.zip
+kurigram==2.2.6
 pyromod==3.1.6
 TgCrypto==1.2.5
 plyer==2.1.0
