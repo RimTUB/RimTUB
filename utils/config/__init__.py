@@ -83,7 +83,7 @@ class Config(DefaultConfig):
                 self.logger.error(f"Укажи {attr} в config.yaml !")
                 return False
         
-        data['PHONES'] = [f"+{p}" for p in data['PHONES'] if not str(p).startswith('+')]
+        data['PHONES'] = [f"+{p}" if not str(p).startswith('+') else str(p) for p in data['PHONES']]
 
         for k, v in data.items():
             if 'LOGGING_LEVEL' in k:
