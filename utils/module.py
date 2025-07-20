@@ -184,6 +184,8 @@ class Module(SingletonByAttribute):
 
 
     async def prepare_buttons(self, buttons: Buttons):
+        if getattr(buttons, '_prepared', False):
+            return buttons
         for row in buttons.inline_keyboard:
             for button in row:
                 if button.callback_data:
