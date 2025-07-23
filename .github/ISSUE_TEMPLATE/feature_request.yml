@@ -1,0 +1,67 @@
+
+name: "💡 Feature Request / Запрос на фичу"
+description: "Предложи улучшение для самого RimTUB · Suggest an improvement for RimTUB core"
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Запрос на фичу для RimTUB
+
+        Это шаблон для предложений, **не связанных с модулями**.  
+        Например: Добавление/улучшение возможностей для разработчиков, улучшение UI, и тп
+
+        ---  
+        This is a template for feature requests **not related to any module**.  
+        For example: Adding/improving developer features, improving UI, etc.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: ✨ Что ты предлагаешь? / What do you propose?
+      description: |
+        Опиши, что ты хочешь добавить или изменить в RimTUB.  
+        Describe what you want to add or change in RimTUB.
+      placeholder: |
+        Я добавить...
+        I suggest adding...
+        
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: ❓ Зачем это нужно? / Why is it useful?
+      description: |
+        Зачем эта фича? Что она улучшит?  
+        Why is this feature needed? What does it improve?
+      placeholder: |
+        Сейчас ..., и это не удобно, намного удобней было бы если ...
+        Now ..., and it is not convenient, it would be much more convenient if ...
+   
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: 🔧 Как ты это видишь? (опционально) / How do you imagine it? (optional)
+      description: |
+        Опиши, как ты представляешь реализацию. Можно UI, текст команд и т.д.  
+        Describe how you imagine the implementation (optional).
+      placeholder: |
+        Можно сделать ..., и иак будет лучше
+        You can do ..., and it will be better
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: ✅ Подтверждение / Confirmation
+      options:
+        - label: Я проверил, что похожей фичи ещё **нет** в других issues · I confirmed this idea does **not** exist in other issues
+          required: true
+
