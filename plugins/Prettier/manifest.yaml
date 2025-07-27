@@ -1,0 +1,27 @@
+
+module_name: Prettier
+version: 1.0.1
+native_RimTUB_version: 2.2.2-6 
+online_check_RimTUB_versions: Off
+
+description: | 
+    Модуль для преобразования разных данных в читабельный (красивый) вид
+
+author: built-in (@RimMirK)
+
+sections:
+    _: 
+        description: ""
+        commands:
+            - names: [ps2s, psec_to_str]
+              arguments:
+                  - {text: секунды, req: Yes}
+              description: Переоразовать секунды в читабельное время
+            - names: [pnum]
+              arguments:
+                  - {text: большое число, req: Yes}
+              description: Отобразить число с разделением десятков
+            - names: [pt2s, ptext_to_sec]
+              arguments:
+                  - {text: Секунды, req: Yes}
+              description: Преобразовать время в секунды
