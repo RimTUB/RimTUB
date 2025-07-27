@@ -28,8 +28,4 @@ sections:
               arguments: []
               description: Перезапустить RimTUB
 
-    next: 
-        description: Halo
-        features:
-            - title: Хз
-              description: хЗ
+    
