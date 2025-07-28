@@ -6,11 +6,12 @@ on:
       version:
         description: "Tag & archive name (e.g. dev-1.2.3-4)"
         required: true
-      version_tuple:
-        description: "Tuple (e.g. \"(1, 2, 3, 'dev', 4)\")"
-        required: true
+      #version_tuple:
+      #  description: "Tuple (e.g. \"(1, 2, 3, 'dev', 4)\")"
+      #  required: true
       version_type:
         description: "Release/Dev/Test/Beta/Alpha/Pre"
+        default: "Release"
         required: true
       update_type:
         description: "Update/Fix/Patch"
@@ -122,5 +123,5 @@ jobs:
                '{version:$v,update_type:$t,changelog:$c}' \
         | curl -X POST "$API_URL/queue_release" \
                 -H "Content-Type: application/json" \
-                -H "Authorization: Bearer $API_TOKEN" \
+                -H "X-API-Token: $API_TOKEN" \
                 -d @-
