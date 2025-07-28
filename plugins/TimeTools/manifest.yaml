@@ -5,6 +5,7 @@ available_RimTUB_versions:
     - 2.2
     - 2.2.1
     - dev-2.2.1
+    - 2.2.2-6
 online_check_RimTUB_versions: Off
 description: |
     Работа со временем
@@ -15,8 +16,8 @@ description: |
     
 author: "built-in (@RimMirK)"
 sections:
-    timers:
-        description: Команды для работы с таймерами
+    _:
+        description: 
         commands:
             - names: [timer]
               arguments:
@@ -30,9 +31,8 @@ sections:
               arguments:
                   - {text: ID Таймера, req: true}
               description: Остановить таймер
-    time_lookup:
-        description: Команды для запроса времени
-        commands:
+   
+      
             - names: [gettime]
               arguments:
                   - {text: Город, req: true}
