@@ -52,22 +52,20 @@ def get_root(as_path=False) -> str|Path:
 
 def get_args(text: str, default: Any = '') -> str | Any:
     """
-    Извлекает аргументы из текста.
+    Extracts arguments from a command text.
 
-    :param str text: исходный текст с аргументами.
-    :param Any default: значение по умолчанию, если аргумент отсутствует.
-    :return str | Any: строка с аргументом или значение по умолчанию.
+    Handles prefix and optional whitespace, like: ".command arg" or ". command arg"
 
-    ## Пример
-    .. code-block:: python
-        # msg.text = '.command some text'
-        text = get_args(msg.text)
-        print(text) # some text
+    :param str text: the original text containing command and arguments
+    :param Any default: the default value if no argument is present
+    :return str | Any: the extracted argument string or the default value
     """
-    try:
-        return text.split(maxsplit=1)[1]
-    except IndexError:
+    text = text.strip()
+    if not text.startswith(Config.PREFIX):
         return default
+    text_wo_prefix = text[len(Config.PREFIX):].lstrip()
+    parts = text_wo_prefix.split(maxsplit=1)
+    return parts[1] if len(parts) > 1 else default
 
 
 def parse_args(input_str: str) -> Tuple[List[str], List[str], Dict[str, Any]]:
@@ -572,4 +570,5 @@ def generate_random_identifier(length=10):
         random.choice(string.ascii_letters + string.digits)
         for __ in range(length)
     )
+
     
