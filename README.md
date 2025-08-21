@@ -452,6 +452,7 @@ sudo pip install -r requirements.txt
 1. Open **Termux**.
 2. Clone the RimTUB repository:
    ```sh
+   apt update && apt upgrade -y && apt install git -y
    git clone https://github.com/RimTUB/RimTUB
    ```
 
