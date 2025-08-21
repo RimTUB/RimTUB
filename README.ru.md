@@ -342,6 +342,7 @@
 1. Открой **Termux**.
 2. Клонируй репозиторий RimTUB:
    ```sh
+   apt update && apt upgrade -y && apt install git -y
    git clone https://github.com/RimTUB/RimTUB
    ```
 
