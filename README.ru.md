@@ -20,8 +20,8 @@
 <a href="https://RimTUB.pp.ua" target="_blank">
 ![RimTUB.pp.ua Website Temporarily Unavailable](https://img.shields.io/badge/RimTUB.pp.ua%20-%20Временно%20Недоступен-yellow)</a>
 <a href="https://docs.RimTUB.pp.ua" target="_blank">
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.RimTUB.pp.ua&up_message=работает!&down_message=не%20работает%28&label=docs.RimTUB.pp.ua)
-</a>
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.RimTUB.pp.ua&up_message=работает!&down_message=не%20работает%28&label=docs.RimTUB.pp.ua)</a>
+[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ---
 
