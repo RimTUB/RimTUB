@@ -92,7 +92,7 @@ Here you can:
 2. Click **Start** or type `/start` if the bot is silent.  
 3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
 4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
-5. Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`
+5. ❗️ Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf` ❗️
 
 ---
 
@@ -178,7 +178,7 @@ You'll only need to do this once
 2. Click **Start** or type `/start` if the bot is silent.  
 3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
 4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
-5. Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`.
+5. ❗️ Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`. ❗️
 
 ---
 
@@ -271,7 +271,7 @@ You'll only need to do this once
 2. Click **Start** or type `/start` if the bot is silent.  
 3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
 4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
-5. Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`.
+5. ❗️ Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`. ❗️
 
 ---
 
@@ -398,7 +398,7 @@ sudo pip install -r requirements.txt
 2. Click **Start** or type `/start` if the bot is silent.  
 3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
 4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
-5. Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`.
+5. ❗️ Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`. ❗️
 
 ---
 
@@ -464,7 +464,7 @@ sudo pip install -r requirements.txt
 2. Click **Start** or type `/start` if the bot is silent.  
 3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
 4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
-5. Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`.
+5. ❗️ Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`. ❗️
 
 ---
 
