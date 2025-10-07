@@ -1,0 +1,22 @@
+version: "3.0"
+
+services:
+  rimtub:
+    image: rimtub:latest
+    container_name: rimtub
+    restart: unless-stopped
+    volumes:
+      - database_db:/database.db
+      - sessions:/sessions
+      - storage:/storage
+      - plugins:/plugins
+      - databases:/databases
+      - ./config.yaml:/config.yaml
+
+volumes:
+  database_db:
+  sessions:
+  storage:
+  plugins:
+  databases:
+  venv_data:

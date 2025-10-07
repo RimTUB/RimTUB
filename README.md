@@ -151,6 +151,79 @@ You'll only need to do this once
 </details>
 
 <details>
+<summary><strong>Docker</strong></summary>
+
+<a id="Docker"></a>
+
+### 🔹 Step 1. Clone the RimTUB repository
+1. In terminal, enter the command:
+   ```sh
+   git clone https://github.com/RimTUB/RimTUB
+   ```
+
+---
+
+### 🔹 Step 2. Create a Telegram bot
+1. Open Telegram and find user [@BotFather](https://t.me/BotFather).  
+2. Click **Start** or type `/start` if the bot is silent.  
+3. Type `/newbot`, set a name and link for the bot (for example, `RimTUB_nickname_bot`).  
+4. BotFather will send you a long **token** — **copy it** (it looks like `123456:ABC-DEF...`).  
+5. ❗️ Type `/setinline`, select your bot, and type any text, for example `asdfjwekjdsf`. ❗️
+
+---
+
+### 🔹 Step 3. Configure RimTUB
+1. In terminal, navigate to the folder where you just cloned RimTUB:
+   ```sh
+   cd RimTUB
+   ```
+2. Open the configuration file `config.yaml` using a text editor, for example, `nano`:
+   ```sh
+   nano config.yaml
+   ```
+3. Insert your data there. Example:
+   ```yaml
+   PHONES:
+     - +12345678990 # Your phone number linked to Telegram
+     - +380XXXXXXXX # You can add multiple accounts
+   
+   BOT_TOKEN: 123456:ABC-DEF...  # Token provided by BotFather
+   ```
+4. To save the file in `nano`, press **Ctrl + S** to save. Then exit by pressing **Ctrl + X**.
+
+---
+
+### 🔹 Step 4. Run
+1. Enter the command to build RimTUB image:
+   ```sh
+   docker build -t rimtub .
+   ```
+---
+2. Enter the command to start RimTUB interactively:
+   ```sh
+   docker-compose up
+   ```
+---
+
+### 🔹 Step 5. Confirm login
+1. After launching, the bot will ask you to enter a code.
+2. Telegram will send you an SMS — enter this code in the console.
+3. If you have two-factor authentication enabled (password when logging into Telegram) — enter it as well. You'll only need to do this once.
+4. Double CTRL + C to exit:
+---
+
+### 🔹 Step 6. Run
+1. Enter the command to start RimTUB in background:
+   ```sh
+   docker-compose up -d
+   ```
+---
+
+🎉 Done! RimTUB is working in Docker! Hooray!
+
+</details>
+
+<details>
 <summary><strong>Linux</strong></summary>
 
 <a id="Linux"></a>
