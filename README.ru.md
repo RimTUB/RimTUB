@@ -1,4 +1,4 @@
-ф# RimTUB - RimMirK's Telegram User Bot
+# RimTUB - RimMirK's Telegram User Bot
 
 ![Banner](.github/banner.png)
 
