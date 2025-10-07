@@ -72,7 +72,7 @@ Here you can:
 
 ## ⚙ Installation
 
-<details>
+<details id='win'>
 <summary><strong>Windows</strong></summary>
 
 <a id="Windows"></a>
