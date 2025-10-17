@@ -108,7 +108,7 @@ async def dmf(app: Client, mod: Module, msg, notify, file_path, name, no_alert=F
                 "безопасности ваших данных а также аккаунта Telegram. "
                 "Убедитесь, что доверяете источнику перед загрузкой.", False),
                 buttons=buttons, message_thread_id=msg.message_thread_id,
-                reply_to_message_id=msg.id if msg else None
+                reply_to_message_id=msg.reply_to_message_id if msg else None
             )
             await msg.delete()
             return
@@ -136,7 +136,7 @@ async def dmf(app: Client, mod: Module, msg, notify, file_path, name, no_alert=F
                 "безопасности ваших данных а также аккаунта Telegram. "
                 "Убедитесь, что доверяете источнику перед загрузкой.", False),
                 buttons=buttons, message_thread_id=msg.message_thread_id,
-                reply_to_message_id=msg.id if msg else None
+                reply_to_message_id=msg.reply_to_message_id if msg else None
             )
             await msg.delete()
             return
