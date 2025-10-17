@@ -107,7 +107,8 @@ async def dmf(app: Client, mod: Module, msg, notify, file_path, name, no_alert=F
                 "Загрузка и использование этого модуля могут представлять угрозу для "
                 "безопасности ваших данных а также аккаунта Telegram. "
                 "Убедитесь, что доверяете источнику перед загрузкой.", False),
-                buttons=buttons, message_thread_id=msg.message_thread_id
+                buttons=buttons, message_thread_id=msg.message_thread_id,
+                reply_to_message_id=msg.id if msg else None
             )
             await msg.delete()
             return
