@@ -17,10 +17,10 @@
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/RimTUB/RimTUB/total?color=magenta)
 ![GitHub Release](https://img.shields.io/github/v/release/RimTUB/RimTUB)
 ![GitHub last commit](https://img.shields.io/github/last-commit/RimTUB/RimTUB)
-<a href="https://RimTUB.pp.ua" target="_blank">
-![RimTUB.pp.ua Website Temporarily Unavailable](https://img.shields.io/badge/RimTUB.pp.ua%20-%20Временно%20Недоступен-yellow)</a>
-<a href="https://docs.RimTUB.pp.ua" target="_blank">
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.RimTUB.pp.ua&up_message=работает!&down_message=не%20работает%28&label=docs.RimTUB.pp.ua)</a>
+<a href="https://RimTUB.app" target="_blank">
+![rimtub.app Website Temporarily Unavailable](https://img.shields.io/badge/rimtub.app%20-%20Временно%20Недоступен-yellow)</a>
+<a href="https://docs.RimTUB.app" target="_blank">
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fdocs.rimtub.app&up_message=работает!&down_message=не%20работает%28&label=docs.rimtub.app)</a>
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ---
@@ -47,7 +47,7 @@
 - **Простой запуск на хостинге** — наш партнёр [**MavisHost**](https://t.me/MavisHostNews/28) позволяет запустить RimTUB всего за пару кликов, без необходимости настраивать серверы.
 - **Открытый исходный код** — и лицензия GPLv3.
 
-## 🔗 Наш сайт: [RimTUB.pp.ua](https://rimtub.pp.ua)
+## 🔗 Наш сайт: [RimTUB.app](https://rimtub.app)
 
 Тут можно:
 - Узнать больше о RimTUB
@@ -608,7 +608,7 @@ sudo pip install -r requirements.txt
 
 ---
 
-## 📚 Документация по модулям: **[docs.rimtub.pp.ua](https://docs.rimtub.pp.ua)**
+## 📚 Документация по модулям: **[docs.rimtub.app](https://docs.rimtub.app)**
 
 Здесь ты найдёшь всё, чтобы написать свой модуль для RimTUB:
 
@@ -642,8 +642,8 @@ sudo pip install -r requirements.txt
 - **Разработчик**: [@RimMirK](https://t.me/RimMirK) 
 - **Телеграм Канал**: [@RimTUB](https://t.me/RimTUB)
 - **Телеграм Чат**: [@RimTUB_chat](https://t.me/RimTUB_chat)
-- **Официальный сайт**: [RimTUB.pp.ua](https://rimtub.pp.ua/)
-- **Документация**: [docs.RimTUB.pp.ua](https://docs.rimtub.pp.ua/)
+- **Официальный сайт**: [rimtub.app](https://rimtub.app/)
+- **Документация**: [docs.rimtub.app](https://docs.rimtub.app/)
 - **Партнер MavisHost**: [@MavisHostNews](https://t.me/MavisHostNews/28)
 
 ---
