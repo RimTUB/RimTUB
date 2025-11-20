@@ -48,7 +48,7 @@
 - **Easy deployment on hosting** — our partner [**MavisHost**](https://t.me/MavisHostNews/28) allows you to launch RimTUB in just a few clicks, without the need to configure servers.
 - **Open source** — with GPLv3 license.
 
-## 🔗 Our website: [RimTUB.pp.ua](https://rimtub.pp.ua)
+## 🔗 Our website: [RimTUB.app](https://rimtub.app)
 
 Here you can:
 - Learn more about RimTUB
