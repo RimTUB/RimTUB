@@ -591,7 +591,7 @@ sudo pip install -r requirements.txt
 
 ---
 
-## 📚 Module documentation: **[docs.rimtub.pp.ua](https://docs.rimtub.pp.ua)**
+## 📚 Module documentation: **[docs.rimtub.dev](https://docs.rimtub.dev)**
 
 Here you'll find everything you need to write your own module for RimTUB:
 
