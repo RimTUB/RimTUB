@@ -1,4 +1,4 @@
-from pyrogram.types import Message
+from pyrogram.types import Message, LinkPreviewOptions
 from utils import *
 from googlesearch import search
 from urllib.parse import urlparse
@@ -30,7 +30,7 @@ async def main(app: Client, mod: Module):
                     a(b(r.title) + " · " + urlparse(r.url).netloc, r.url, False) + "\n" + 
                     r.description, True, False
                 ) + '\n\n'
-            await msg.edit(t, disable_web_page_preview=True)
+            await msg.edit(t, LinkPreviewOptions(is_disabled=True))
         except Exception as e:
             await msg.edit(b(f"Произошла ошибка! {e}"))
     
