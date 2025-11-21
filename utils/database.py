@@ -55,6 +55,7 @@ class ModuleDB:
     def __del__(self):
         print('__del__')
         asyncio.run(self.teardown())
+        print('__del__ done')
 
     async def bootstrap(self) -> None:
         if not self.con:
