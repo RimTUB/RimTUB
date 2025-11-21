@@ -25,7 +25,7 @@ async def main(app: Client, mod: Module):
                 f"{pre(code, lang)}\n"
                 f"{code_html(result)}\n"
                 f"{emoji(4985712614039355997, '🖥')} code>{lang}/code>\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(text=(
@@ -51,7 +51,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} Python 3"
                 f"{pre(code, 'py')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -74,7 +74,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} JavaScript"
                 f"{pre(code, 'js')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -97,7 +97,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} Lua"
                 f"{pre(code, 'lua')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -120,7 +120,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} C#"
                 f"{pre(code, 'cs')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -143,7 +143,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} C"
                 f"{pre(code, 'c')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -166,7 +166,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} C++"
                 f"{pre(code, 'cpp')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -189,7 +189,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} Rust"
                 f"{pre(code, 'rust')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
@@ -212,7 +212,7 @@ async def main(app: Client, mod: Module):
                 f"{emoji(4985930888572306287, '🖥')} Java"
                 f"{pre(code, 'java')}\n"
                 f"{code_html(result)}\n"
-                f"{emoji(5298728804074666786, '⏱')} {code(t2-t1)}"
+                f"{emoji(5298728804074666786, '⏱')} {code_html(t2-t1)}"
             ))
         except Exception as err:
             await msg.edit(f"{emoji(5447644880824181073, '⚠️')} Произошла неизвестная ошибка")
