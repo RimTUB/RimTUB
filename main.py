@@ -37,7 +37,7 @@ from pyrogram.methods.decorators.on_callback_query import OnCallbackQuery
 from pyrogram.handlers import RawUpdateHandler
 from pyrogram.handlers.callback_query_handler import CallbackQueryHandler
 from pyrogram.dispatcher import Dispatcher
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, LinkPreviewOptions
 from utils.config import Config
 from utils import get_root, ModifyPyrogramClient, clients
 from sys import argv
@@ -140,6 +140,7 @@ async def start():
         hide_password=True,
         parse_mode=ParseMode.HTML,
         sleep_threshold=30,
+        link_preview_options=LinkPreviewOptions(is_disabled=Conf.DISABLE_DEFAULT_LINK_PREVIEW)
     )
     bot.logger = bot_logger
     bot.dispatcher.handler_worker = lambda lock: handler_worker(bot.dispatcher, lock)

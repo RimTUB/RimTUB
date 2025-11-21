@@ -35,6 +35,8 @@ class DefaultConfig:
 
     DISABLE_MODULE_CHECKING: bool = False
     DISABLE_MODULE_VERSION_CHECKING: bool = False
+    
+    DISABLE_DEFAULT_LINK_PREVIEW = False
 
     CHECK_VERSIONS_URL: str = "https://rimtub.pp.ua/api/getAvaiableRimTUBModuleVersions/{module_name}/{module_version}"
 

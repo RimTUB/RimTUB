@@ -121,6 +121,7 @@ class ModifyPyrogramClient(Client):
         self._module_groups = {}
         self._on_ready_funcs = []
         
+        
     
     
     async def _load_dialogs(self):
