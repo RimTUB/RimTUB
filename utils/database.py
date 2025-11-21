@@ -50,6 +50,9 @@ class ModuleDB:
     def __init__(self, path) -> None:
         self.path = path
         self.con = None
+    
+    def __del__(self):
+        asyncio.run(self.teardown())
 
     async def bootstrap(self) -> None:
         if not self.con:
