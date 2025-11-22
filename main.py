@@ -226,7 +226,10 @@ async def start():
 
     await idle()
 
+    print('after idle')
+
     for cl in clients:
+        print('stop clients')
         await cl.stop()
 
 
