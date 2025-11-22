@@ -226,6 +226,8 @@ async def start():
 
     await idle()
 
+    logger.info("Выключаюсь... Это может занять некоторое время")
+
     for cl in clients:
         await cl.stop()
 
