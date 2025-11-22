@@ -5,8 +5,8 @@ from pyrogram.enums import ClientPlatform
 
 class DefaultConfig:
 
-    VERSION = '2.2.2-8'
-    VERSION_TUPLE = (2, 2, 2, 'release', 8)
+    VERSION = '2.3'
+    VERSION_TUPLE = (2, 3, 0, 'release', 0)
 
 
     PHONES: List[str]
@@ -59,4 +59,5 @@ class DefaultConfig:
     COMPRESS_OLD_LOGFILES = True
     AUTO_DELETE_OLD_LOGFILES = True
     DELETE_LOGFILES_OLDER_THAN_DAYS = 7
+
 
