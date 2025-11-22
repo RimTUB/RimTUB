@@ -126,7 +126,7 @@ class ModifyPyrogramClient(Client):
         print('__del__ app')
     
     def stop(self):
-        self.__del__(self)
+        self.__del__()
         super().stop()
         print('after_stop')
     
