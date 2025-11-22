@@ -134,6 +134,9 @@ class ModifyPyrogramClient(Client):
     async def stop(self):
         self.__del__()
         await super().stop()
+        
+        for mod in self._all_mods:
+            await mod.db.teardown()
         print('after_stop')
     
     async def _load_dialogs(self):
