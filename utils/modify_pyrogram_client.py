@@ -87,7 +87,7 @@ class ModifyPyrogramClient(Client):
     log: Logger.log
     bot: Client
     bot_username: str
-    _module_tasks: dict[str, asyncio.Task]
+    _module_tasks: dict[str, list[asyncio.Task]]
     _group_counter: Iterable
     _module_groups: dict[int, List[str]]
     
@@ -123,7 +123,11 @@ class ModifyPyrogramClient(Client):
         
         
     def __del__(self):
-        print('__del__ app')
+        for m in self._module_tasks.values():
+            for task in m:
+                print(f'cancelling task {task}')
+                task.cancel()
+                print('done')
     
     async def stop(self):
         self.__del__()
