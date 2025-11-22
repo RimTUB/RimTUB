@@ -87,9 +87,10 @@ class ModifyPyrogramClient(Client):
     log: Logger.log
     bot: Client
     bot_username: str
-    _module_tasks: dict[str, asyncio.Task]
+    _module_tasks: dict[str, list[asyncio.Task]]
     _group_counter: Iterable
     _module_groups: dict[int, List[str]]
+    _all_mods: list[Module]
     
 
     def __init__(self, *args, num: int, logger: Logger, bot: Client, **kwargs):
@@ -120,8 +121,20 @@ class ModifyPyrogramClient(Client):
         self._group_counter = itertools.count()
         self._module_groups = {}
         self._on_ready_funcs = []
+        self._all_mods = []
         
+        
+    def __del__(self):
+        for m in self._module_tasks.values():
+            for task in m:
+                task.cancel()
     
+    async def stop(self):
+        self.__del__()
+        await super().stop()
+        
+        for mod in self._all_mods:
+            await mod.db.teardown()
     
     async def _load_dialogs(self):
         """
@@ -274,7 +287,11 @@ class ModifyPyrogramClient(Client):
             
 
 
-            mod = await Module(module_name, self.num).init(self)
+            mod = Module(module_name, self.num)
+            self._all_mods.append(mod)
+            
+            await mod.init(self)
+        
             await module.main(self, mod)
 
             
@@ -345,6 +362,11 @@ class ModifyPyrogramClient(Client):
                     if module in disabled_modules:
                         self.logger.debug(f'module {module} is disabled. Skipping...')
                         continue
+                    if module == 'PremiumEmojisTools':
+                        from utils.scripts import is_normal_linux
+                        if not is_normal_linux():
+                            self.logger.warning(f"Модуль PremiumEmojisTools не работает на Termux/UserLAnd, так что модуль отключен.")
+                            continue
                     self.logger.debug(f'loading {module}...')
                     await self.load_module(module)
             break

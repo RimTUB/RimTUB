@@ -572,3 +572,15 @@ def generate_random_identifier(length=10):
     )
 
     
+import os
+
+def is_normal_linux() -> bool:
+    # Termux
+    if "PREFIX" in os.environ and "/data/data/com.termux" in os.environ.get("PREFIX", ""):
+        return False
+
+    # UserLAnd
+    if os.path.exists("/usr/bin/.userland") or os.path.exists("/etc/userland-release"):
+        return False
+
+    return True

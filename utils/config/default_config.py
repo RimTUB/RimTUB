@@ -5,8 +5,8 @@ from pyrogram.enums import ClientPlatform
 
 class DefaultConfig:
 
-    VERSION = '2.2.2-8'
-    VERSION_TUPLE = (2, 2, 2, 'release', 8)
+    VERSION = '2.3'
+    VERSION_TUPLE = (2, 3, 0, 'release', 0)
 
 
     PHONES: List[str]
@@ -35,6 +35,8 @@ class DefaultConfig:
 
     DISABLE_MODULE_CHECKING: bool = False
     DISABLE_MODULE_VERSION_CHECKING: bool = False
+    
+    DISABLE_DEFAULT_LINK_PREVIEW = False
 
     CHECK_VERSIONS_URL: str = "https://rimtub.pp.ua/api/getAvaiableRimTUBModuleVersions/{module_name}/{module_version}"
 
@@ -57,4 +59,5 @@ class DefaultConfig:
     COMPRESS_OLD_LOGFILES = True
     AUTO_DELETE_OLD_LOGFILES = True
     DELETE_LOGFILES_OLDER_THAN_DAYS = 7
+
 
