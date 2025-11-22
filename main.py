@@ -226,16 +226,12 @@ async def start():
 
     await idle()
 
-    print('after idle')
+    logger.info("Выключаюсь... Это может занять некоторое время")
 
     for cl in clients:
-        print('stop clients')
         await cl.stop()
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(start())
-    except KeyboardInterrupt:
-        print('except')
+    loop.run_until_complete(start())

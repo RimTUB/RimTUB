@@ -127,9 +127,7 @@ class ModifyPyrogramClient(Client):
     def __del__(self):
         for m in self._module_tasks.values():
             for task in m:
-                print(f'cancelling task {task}')
                 task.cancel()
-                print('done')
     
     async def stop(self):
         self.__del__()
@@ -137,7 +135,6 @@ class ModifyPyrogramClient(Client):
         
         for mod in self._all_mods:
             await mod.db.teardown()
-        print('after_stop')
     
     async def _load_dialogs(self):
         """
