@@ -122,7 +122,8 @@ class ModifyPyrogramClient(Client):
         self._on_ready_funcs = []
         
         
-    
+    def __del__(self):
+        print('__del__ app')
     
     async def _load_dialogs(self):
         """
