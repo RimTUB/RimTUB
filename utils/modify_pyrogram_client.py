@@ -125,9 +125,9 @@ class ModifyPyrogramClient(Client):
     def __del__(self):
         print('__del__ app')
     
-    def stop(self):
+    async def stop(self):
         self.__del__()
-        super().stop()
+        await super().stop()
         print('after_stop')
     
     async def _load_dialogs(self):
