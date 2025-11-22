@@ -362,6 +362,11 @@ class ModifyPyrogramClient(Client):
                     if module in disabled_modules:
                         self.logger.debug(f'module {module} is disabled. Skipping...')
                         continue
+                    if module == 'PremiumEmojisTools':
+                        from utils.scripts import is_normal_linux
+                        if not is_normal_linux():
+                            self.logger.warning(f"Модуль PremiumEmojisTools не работает на Termux/UserLAnd, так что модуль отключен.")
+                            continue
                     self.logger.debug(f'loading {module}...')
                     await self.load_module(module)
             break
